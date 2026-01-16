@@ -1,0 +1,31 @@
+.work-orders-duration-row {
+  display: flex;
+  position: relative;
+  height: 100%;
+
+  &-interval {
+      flex: 0 0 130px;
+      border-right: 1px solid rgba(230, 235, 240, 1);
+      height: 100%;
+  }
+
+  .work-order-bar {
+      position: absolute;
+      height: 24px;
+      top: 50%;
+      transform: translateY(-50%);
+      background-color: #4A90E2;
+      border-radius: 4px;
+      display: flex;
+      align-items: center;
+      padding: 0 8px;
+      color: white;
+      font-size: 12px;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      z-index: 1;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  }
+}

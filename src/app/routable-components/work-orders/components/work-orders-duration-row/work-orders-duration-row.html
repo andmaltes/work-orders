@@ -1,0 +1,14 @@
+<div class="work-orders-duration-row">
+    <div class="work-orders-duration-row-interval" *ngFor="let interval of intervals$ | async">
+    </div>
+
+    <ng-container *ngFor="let workorder of workOrders$ | async; let i = index">
+        <div class="work-order-bar"
+             *ngIf="workorder.firstIntervalId"
+             [style.left.px]="calculateLeft(workorder, (intervals$ | async) || [])"
+             [style.width.px]="calculateWidth(workorder)">
+            {{ workorder.data.name }}
+        </div>
+    </ng-container>
+</div>
+

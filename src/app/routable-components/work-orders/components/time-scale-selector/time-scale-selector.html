@@ -1,0 +1,11 @@
+<div class="time-scale-selector">
+    <div class="time-scale-selector-label">Timescale</div>
+    <div class="time-scale-selector-select">
+        <ng-select [items]="zoomLevels"
+                   [(ngModel)]="selectedZoomLevelId"
+                   [clearable]="false" [searchable]="false"
+(change)="onTimeScaleChange($event)"
+        >
+        </ng-select>
+    </div>
+</div>

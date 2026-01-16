@@ -1,1 +1,24 @@
-/* You can add global styles to this file, and also import other style files */
+/* Importing Bootstrap SCSS file. */
+@import 'bootstrap/scss/bootstrap';
+/* Importing ng-select CSS file. */
+@import "@ng-select/ng-select/themes/default.theme.css";
+
+@import './styles/overrides';
+@import './styles/variables';
+
+/* Clearing default bootstrap styles */
+h1, h2, h3, p {
+  margin: 0;
+  font-family: inherit;
+  font-size: inherit;
+}
+
+/* Global Styles */
+
+h3.section-title {
+  color: $title-color;
+  font-family: CircularStd-Medium, sans-serif;
+  font-size: 24px;
+  font-weight: 500;
+  line-height: 34px;
+}

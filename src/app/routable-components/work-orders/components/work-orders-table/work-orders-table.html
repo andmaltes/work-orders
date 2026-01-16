@@ -1,0 +1,11 @@
+<div class="work-orders-table">
+    <div class="work-orders-table-header">
+        Work Center
+    </div>
+    <div class="work-orders-table-row" *ngFor="let workCenterDocument of workCenters$ | async">
+        <div class="work-order-name">{{ workCenterDocument.data.name }}</div>
+
+        <app-work-orders-duration-row style="flex-grow: 1"
+                                      [workCenterId]="workCenterDocument.docId"></app-work-orders-duration-row>
+    </div>
+</div>
