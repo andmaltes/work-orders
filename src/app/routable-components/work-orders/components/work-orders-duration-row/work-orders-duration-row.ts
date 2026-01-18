@@ -5,6 +5,8 @@ import { AsyncPipe, NgForOf, NgIf } from "@angular/common";
 import { WorkOrderDocument, WorkOrderDocumentWithIntervals } from "../../model/work-order.interface";
 import { NgbDropdown, NgbDropdownItem, NgbDropdownMenu, NgbDropdownToggle } from "@ng-bootstrap/ng-bootstrap";
 import { Interval } from "../../model/timeline.state";
+import { WorkOrderStatusBadge } from "../../../../shared-components/work-order-status-badge/work-order-status-badge";
+import { CreateEditWorkOrderModalServiceService } from "../../services/create-edit-work-order-modal-service.service";
 
 @Component({
     selector: 'app-work-orders-duration-row',
@@ -15,7 +17,8 @@ import { Interval } from "../../model/timeline.state";
         NgbDropdown,
         NgbDropdownToggle,
         NgbDropdownMenu,
-        NgbDropdownItem
+        NgbDropdownItem,
+        WorkOrderStatusBadge
     ],
     templateUrl: './work-orders-duration-row.html',
     styleUrl: './work-orders-duration-row.scss',
@@ -30,7 +33,7 @@ export class WorkOrdersDurationRow implements OnInit {
     // As per designs, every interval column is 130px wide
     private readonly INTERVAL_WIDTH = 130;
 
-    constructor(private timelineStateService: TimelineStateService) {
+    constructor(private timelineStateService: TimelineStateService, private createEditWorkOrderModalServiceService:CreateEditWorkOrderModalServiceService) {
     }
 
     ngOnInit(): void {
@@ -69,7 +72,9 @@ export class WorkOrdersDurationRow implements OnInit {
         return  (1 - (workorder.firstIntervalPercentage || 0))  * this.INTERVAL_WIDTH;
     }
 
-    edit():void{}
+    edit(workorder:WorkOrderDocument):void{
+        this.createEditWorkOrderModalServiceService.open(workorder.data.workCenterId,workorder.docId);
+    }
     delete(workorder:WorkOrderDocument):void{
         this.timelineStateService.deleteWorkOrder(workorder.docId);
     }

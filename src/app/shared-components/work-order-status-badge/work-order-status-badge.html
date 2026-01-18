@@ -1,0 +1,13 @@
+<div class="work-order-status-badge work-order-status-badge-open" *ngIf="orderStatus == 'open'">
+    Open
+</div>
+<div class="work-order-status-badge work-order-status-badge-in-progress"
+     *ngIf="orderStatus == 'in-progress'">
+    In Progress
+</div>
+<div class="work-order-status-badge work-order-status-badge-complete" *ngIf="orderStatus == 'complete'">
+    Complete
+</div>
+<div class="work-order-status-badge work-order-status-badge-blocked" *ngIf="orderStatus == 'blocked'">
+    Blocked
+</div>

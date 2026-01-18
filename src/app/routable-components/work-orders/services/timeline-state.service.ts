@@ -1,5 +1,5 @@
 import { Injectable } from "@angular/core";
-import { BehaviorSubject, combineLatest, combineLatestWith, forkJoin, map, Observable } from "rxjs";
+import { BehaviorSubject, combineLatest, combineLatestWith, filter, forkJoin, map, Observable } from "rxjs";
 import moment from 'moment';
 import { SAMPLE_WORK_CENTERS } from "../../../mock-data/work-center";
 import { SAMPLE_WORK_ORDERS } from "../../../mock-data/work-order";
@@ -30,7 +30,7 @@ export class TimelineStateService {
     });
 
     // Current State
-    private get snapshot(): TimelineState {
+    get snapshot(): TimelineState {
         return this.state$.getValue();
     }
 
@@ -52,12 +52,16 @@ export class TimelineStateService {
         map(state => state.intervals)
     );
 
+    getWorkOrdersForWorkCenter$(workCenterId: string): Observable< WorkOrderDocument[]> {
+        console.log(workCenterId,'getWorkOrdersForWorkCenter$')
+        return this.workOrders$.pipe(map(
+            (workOrders:WorkOrderDocument[])=> {
+                return workOrders.filter((workOrder:WorkOrderDocument)=>workOrder.data.workCenterId === workCenterId)
 
-
-    getWorkOrdersForWorkCenter(orders: WorkOrderDocument[], workCenterId: string): WorkOrderDocument[] {
-        return orders.filter(o => o.data.workCenterId === workCenterId)
-
+            }))
     }
+
+
 
     getWorkOrdersForWorkCenterWithIntervals(workCenterId: string): Observable<WorkOrderDocumentWithIntervals[]> {
         return this.state$.pipe(
@@ -99,6 +103,9 @@ export class TimelineStateService {
             })
         );
     }
+    private getWorkOrdersForWorkCenter(orders: WorkOrderDocument[], workCenterId: string): WorkOrderDocument[] {
+        return orders.filter(o => o.data.workCenterId === workCenterId)
+    }
 
     // Actions
     setTimescale(scale: Timescale): void {
@@ -114,8 +121,8 @@ export class TimelineStateService {
 
     updateWorkOrder(updated: WorkOrderDocument): void {
         this.patchState({
-            workOrders: this.snapshot.workOrders.map(o =>
-                o.docId === updated.docId ? updated : o
+            workOrders: this.snapshot.workOrders.map((workOrder) =>
+                workOrder.docId === updated.docId ? updated : workOrder
             )
         });
     }

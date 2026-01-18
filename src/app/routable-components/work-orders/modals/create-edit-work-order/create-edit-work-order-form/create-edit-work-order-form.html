@@ -1,0 +1,66 @@
+<form [formGroup]="workOrderForm" *ngIf="workOrderForm" class="work-order-form">
+    <div class="work-order-form-header">
+        <div>
+            <div class="work-order-form-title">Work Order Details</div>
+            <div class="work-order-form-subtitle">Specify the dates, name and status for this order</div>
+        </div>
+        <!-- Actions -->
+        <div class="work-order-form-actions">
+            <button type="button" class="work-order-form-cancel" (click)="onCancel()">
+                Cancel
+            </button>
+            <button type="submit" class="work-order-form-create" (click)="onCreate()">
+                Create
+            </button>
+        </div>
+    </div>
+
+    <div class="work-order-form-table">
+        <!-- Work Order Name -->
+        <div class="work-order-form-label">Work Order Name</div>
+        <input
+                type="text"
+                formControlName="name"
+                placeholder="Enter Work Order Name"
+        />
+        <div class="work-order-form-error" *ngIf="workOrderForm.get('name')?.touched && workOrderForm.get('name')?.invalid">
+            Work Order Name is required
+        </div>
+
+        <!-- Status -->
+        <div class="work-order-form-label">Status</div>
+        <app-custom-selector [items]="statuses" [defaultValue]="statuses[0]" (onItemSelected)="onStatusChange($event)">
+            <app-work-order-status-badge *ngIf="workOrderForm.value.status"
+                                         [orderStatus]="workOrderForm.value.status"></app-work-order-status-badge>
+        </app-custom-selector>
+        <div class="work-order-form-error" *ngIf="workOrderForm.get('status')?.touched && workOrderForm.get('status')?.invalid">
+            Status is required
+        </div>
+
+        <!-- Start Date -->
+        <div class="work-order-form-label">Start Date</div>
+        <input type="text" ngbDatepicker
+               #dStart="ngbDatepicker"
+               formControlName="startDate" readonly (click)="dStart.toggle()"/>
+        <div class="work-order-form-error" *ngIf="workOrderForm.get('startDate')?.touched && workOrderForm.get('startDate')?.invalid">
+            Start Date is required
+        </div>
+
+        <!-- End Date -->
+        <div class="work-order-form-label">End Date</div>
+        <input type="text" ngbDatepicker
+               #dEnd="ngbDatepicker"
+               formControlName="endDate" readonly (click)="dEnd.toggle()"/>
+        <div  class="work-order-form-error" *ngIf="workOrderForm.get('endDate')?.touched && workOrderForm.get('endDate')?.invalid">
+            End Date is required
+        </div>
+        <div  class="work-order-form-error" *ngIf="workOrderForm.touched && workOrderForm.invalid && workOrderForm.errors">
+            <div *ngIf="workOrderForm.errors['dateRangeInvalid']">
+                Start Date must be before End Date
+            </div>
+            <div *ngIf="workOrderForm.errors['workOrderOverlap']">
+                Work Order overlaps with {{workOrderForm.errors['workOrderOverlap'].data.name}}
+            </div>
+        </div>
+    </div>
+</form>

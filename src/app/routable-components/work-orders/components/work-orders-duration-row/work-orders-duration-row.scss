@@ -65,36 +65,6 @@ app-work-orders-duration-row {
         overflow: hidden;
       }
 
-      &-tag {
-        padding: 2px 8px;
-        font-family: CircularStd-Book, sans-serif;
-        font-size: 14px;
-        font-weight: 400;
-        line-height: 18px;
-        border-radius: 5px;
-
-        &-open {
-          color: #00B0BF;
-          background-color: #E4FDFF;
-        }
-
-        &-in-progress {
-          color: #3E40DB;
-          background-color: #D6D8FF;
-        }
-
-        &-complete {
-          color: #08A268;
-          background-color: #E1FFCC;
-        }
-
-        &-blocked {
-          color: #B13600;
-          background-color: #FCEEB5;
-        }
-
-      }
-
       &:hover {
         .work-order-bar-options {
           display: block;

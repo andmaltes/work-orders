@@ -1,5 +1,6 @@
 import moment from "moment";
 import { Interval, Timescale } from "../model/timeline.state";
+import { NgbDateStruct } from "@ng-bootstrap/ng-bootstrap";
 
 // Depending on the timescale we need an id to represent the date. For intance, if we are in a month interval
 // 1 sept and 3 of sept will fall in the same id (as they belong to the same month)
@@ -92,3 +93,16 @@ export function calculateIntervals(timescale: Timescale, past: number, future: n
 
     return intervals;
 }
+
+export function ngbToDate(date: NgbDateStruct): Date {
+    return new Date(date.year, date.month - 1, date.day);
+}
+
+export function dateToNgb(date: moment.Moment): NgbDateStruct {
+    return {
+        year: date.year(),
+        month: date.month() + 1,
+        day: date.date()
+    };
+}
+

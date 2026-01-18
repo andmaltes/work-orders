@@ -2,7 +2,6 @@
 
 app-custom-selector {
   ng-select {
-    height: 24px;
 
     .ng-input {
       display: none;
@@ -17,9 +16,6 @@ app-custom-selector {
         box-shadow: none !important;
       }
 
-      .ng-arrow-wrapper {
-        display: none;
-      }
     }
 
     .ng-value-container {
@@ -32,7 +28,6 @@ app-custom-selector {
       border-radius: 5px;
       background-color: rgba(255, 255, 255, 1);
       border: none;
-      width: auto !important;
       min-width: max-content;
 
       .ng-option {

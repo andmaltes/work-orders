@@ -1,5 +1,6 @@
 <div class="work-orders-duration-row">
-    <div class="work-orders-duration-row-interval" [class.work-orders-duration-row-interval-today]="interval.isToday" *ngFor="let interval of intervals$ | async">
+    <div class="work-orders-duration-row-interval" [class.work-orders-duration-row-interval-today]="interval.isToday"
+         *ngFor="let interval of intervals$ | async">
         <ng-container *ngFor="let workorder of workOrders$ | async; let i = index">
             <div class="work-order-bar"
                  [class.work-order-bar-open]="workorder.data.status == 'open'"
@@ -14,24 +15,15 @@
                     {{ workorder.data.name }}
                 </div>
 
-                <div class="work-order-bar-tag work-order-bar-tag-open" *ngIf="workorder.data.status == 'open'">Open
-                </div>
-                <div class="work-order-bar-tag work-order-bar-tag-in-progress"
-                     *ngIf="workorder.data.status == 'in-progress'">In Progress
-                </div>
-                <div class="work-order-bar-tag work-order-bar-tag-complete" *ngIf="workorder.data.status == 'complete'">
-                    Complete
-                </div>
-                <div class="work-order-bar-tag work-order-bar-tag-blocked" *ngIf="workorder.data.status == 'blocked'">
-                    Blocked
-                </div>
+                <app-work-order-status-badge [orderStatus]="workorder.data.status"></app-work-order-status-badge>
+
                 <div class="work-order-bar-options-container" ngbDropdown container="body">
                     <div class="work-order-bar-options" ngbDropdownToggle>
                         <img src="ellipsis.png" alt="ellipsis">
                     </div>
 
                     <div ngbDropdownMenu>
-                        <button ngbDropdownItem (click)="edit()">Edit</button>
+                        <button ngbDropdownItem (click)="edit(workorder)">Edit</button>
                         <button ngbDropdownItem (click)="delete(workorder)">Delete</button>
                     </div>
                 </div>
