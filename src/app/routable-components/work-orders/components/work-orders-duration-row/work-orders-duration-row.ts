@@ -33,7 +33,7 @@ export class WorkOrdersDurationRow implements OnInit {
     mouseLeftPos = 0;
 
     // As per designs, every interval column is 130px wide
-    private readonly INTERVAL_WIDTH = 130;
+    private readonly INTERVAL_WIDTH = 113;
 
     constructor(private timelineStateService: TimelineStateService, private createEditWorkOrderModalServiceService:CreateEditWorkOrderModalServiceService) {
     }
