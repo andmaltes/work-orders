@@ -9,6 +9,7 @@
   background-color: $work-orders-bg-color;
   display: flex;
   flex-direction: column;
+  position: relative;
 
   &-header {
     color: $work-orders-header-text-color;

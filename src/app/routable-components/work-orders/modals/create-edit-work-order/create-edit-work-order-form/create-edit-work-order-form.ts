@@ -52,10 +52,10 @@ export class CreateEditWorkOrderForm implements OnInit {
             ).subscribe()
     }
 
-    initForm(workCenterId: string, workOrderId?:string): void {
+    initForm(workCenterId: string, workOrderId?: string): void {
         let workOrdersForCenter = this.timelineStateService.getWorkOrdersForWorkCenter$(workCenterId);
-        let workOrder = this.timelineStateService.snapshot.workOrders.find((workOrder)=>workOrder.docId == workOrderId);
-        if(workOrder){
+        let workOrder = this.timelineStateService.snapshot.workOrders.find((workOrder) => workOrder.docId == workOrderId);
+        if (workOrder) {
             //edit mode
             this.workOrderForm = new FormGroup<CreateEditWorkOrderFormModel>({
                     workCenterId: new FormControl<string>(workCenterId, {
@@ -91,7 +91,7 @@ export class CreateEditWorkOrderForm implements OnInit {
                 }
             );
 
-        }else {
+        } else {
             //create mode
             this.workOrderForm = new FormGroup<CreateEditWorkOrderFormModel>({
                     workCenterId: new FormControl<string>(workCenterId, {
@@ -100,7 +100,6 @@ export class CreateEditWorkOrderForm implements OnInit {
                     }),
                     workOrderId: new FormControl<string>('', {
                         nonNullable: true,
-                        validators: Validators.required
                     }),
                     name: new FormControl<string>('', {
                         nonNullable: true,
@@ -141,7 +140,7 @@ export class CreateEditWorkOrderForm implements OnInit {
             let now = new Date();
             let workOrderData = this.workOrderForm?.value;
             let workOrder: WorkOrderDocument = {
-                docId: workOrderData?.workOrderId  || "wo-" + now.getTime(),
+                docId: workOrderData?.workOrderId || "wo-" + now.getTime(),
                 docType: "workOrder",
                 data: {
                     name: workOrderData?.name || '',
@@ -151,9 +150,10 @@ export class CreateEditWorkOrderForm implements OnInit {
                     endDate: workOrderData?.endDate ? moment(ngbToDate(workOrderData?.endDate)).format("YYYY-MM-DD") : ''
                 }
             };
-            if(workOrderData?.workOrderId){
+            console.log(workOrderData?.workOrderId)
+            if (workOrderData?.workOrderId) {
                 this.timelineStateService.updateWorkOrder(workOrder);
-            }else {
+            } else {
                 this.timelineStateService.createWorkOrder(workOrder);
             }
             this.createEditWorkOrderModalServiceService.close();

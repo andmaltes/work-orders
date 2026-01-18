@@ -7,10 +7,30 @@ app-work-orders-duration-row {
     height: 100%;
     padding: 0 5px;
 
+    &:hover {
+      .work-orders-duration-row-add {
+        display: block;
+        cursor: pointer;
+      }
+    }
+
+    &-add {
+      width: 113px;
+      height: 38px;
+      border: 1px solid #c3c7ff;
+      border-radius: 8px;
+      background-color: rgba(101, 112, 255, 0.1);
+      position: absolute;
+      z-index: 1;
+      top: 5px;
+      display: none;
+    }
+
     &-interval {
       flex: 0 0 130px;
       height: 100%;
       position: relative;
+
       &-today {
         border-left: 3px solid $today-separator-color;
       }
@@ -69,6 +89,7 @@ app-work-orders-duration-row {
         .work-order-bar-options {
           display: block;
         }
+
       }
 
       &-options {
@@ -78,6 +99,7 @@ app-work-orders-duration-row {
         background-color: #F1F3F8;
         text-align: center;
         display: none;
+        cursor: pointer;
 
 
         &-container {

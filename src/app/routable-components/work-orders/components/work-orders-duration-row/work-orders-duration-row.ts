@@ -1,4 +1,4 @@
-import { Component, Input, OnInit, ViewEncapsulation } from '@angular/core';
+import { Component, ElementRef, HostListener, Input, OnInit, ViewChild, ViewEncapsulation } from '@angular/core';
 import { Observable } from "rxjs";
 import { TimelineStateService } from "../../services/timeline-state.service";
 import { AsyncPipe, NgForOf, NgIf } from "@angular/common";
@@ -26,15 +26,26 @@ import { CreateEditWorkOrderModalServiceService } from "../../services/create-ed
 })
 export class WorkOrdersDurationRow implements OnInit {
     @Input() workCenterId: string = '';
+    @ViewChild('container') container?: ElementRef<HTMLDivElement>;
 
     workOrders$!: Observable<WorkOrderDocumentWithIntervals[]>;
     intervals$!: Observable<Interval[]>;
+    mouseLeftPos = 0;
 
     // As per designs, every interval column is 130px wide
     private readonly INTERVAL_WIDTH = 130;
 
     constructor(private timelineStateService: TimelineStateService, private createEditWorkOrderModalServiceService:CreateEditWorkOrderModalServiceService) {
     }
+
+    onMouseMove(event: MouseEvent) {
+        if (this.container) {
+            const rect = this.container.nativeElement.getBoundingClientRect();
+            // Calculate mouse position relative to the container
+            this.mouseLeftPos = event.clientX - rect.left - 62;
+        }
+    }
+
 
     ngOnInit(): void {
         this.workOrders$ = this.timelineStateService.getWorkOrdersForWorkCenterWithIntervals(this.workCenterId);
@@ -77,5 +88,9 @@ export class WorkOrdersDurationRow implements OnInit {
     }
     delete(workorder:WorkOrderDocument):void{
         this.timelineStateService.deleteWorkOrder(workorder.docId);
+    }
+
+    openCreateNewOrder():void{
+        this.createEditWorkOrderModalServiceService.open(this.workCenterId);
     }
 }

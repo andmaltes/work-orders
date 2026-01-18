@@ -1,6 +1,6 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { TimelineStateService } from "../../services/timeline-state.service";
-import { combineLatest, map, Observable } from "rxjs";
+import { combineLatest, map, Observable, tap } from "rxjs";
 import { AsyncPipe, NgForOf, NgIf, NgSwitch, Time } from "@angular/common";
 import { WorkOrdersDurationRow } from "../work-orders-duration-row/work-orders-duration-row";
 import { WorkCenterDocument } from "../../model/work-center.interface";
@@ -20,6 +20,7 @@ import { Interval, Timescale } from "../../model/timeline.state";
     styleUrl: './work-orders-table.scss',
 })
 export class WorkOrdersTable implements OnInit {
+    @ViewChild('scrollContainer') scrollContainer!: ElementRef<HTMLDivElement>;
     workCenters$!: Observable<WorkCenterDocument[]>;
     intervals$!: Observable<Interval[]>;
 
@@ -46,7 +47,25 @@ export class WorkOrdersTable implements OnInit {
                 }
 
                 return { ...interval, formattedName, timescale };
-            }))
+            }),
+                ),
+            tap(() => {
+                setTimeout(() => this.scrollToToday(), 0);
+            })
         );
+    }
+
+     scrollToToday() {
+        const container = this.scrollContainer?.nativeElement;
+        if (!container) return;
+
+        const todayElement = container.querySelector('.work-orders-table-header-current-badge');
+        if (todayElement) {
+            todayElement.scrollIntoView({
+                behavior: 'smooth',
+                inline: 'center',
+                block: 'nearest'
+            });
+        }
     }
 }

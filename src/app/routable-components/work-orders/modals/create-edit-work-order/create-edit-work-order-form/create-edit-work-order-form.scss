@@ -14,10 +14,12 @@ app-create-edit-work-order-form {
       display: flex;
       gap: 8px;
     }
-&-error{
-  color: red;
-  font-size: 12px;
-}
+
+    &-error {
+      color: red;
+      font-size: 12px;
+    }
+
     &-cancel {
       box-shadow: 0 0 0 1px rgba(255, 255, 255, 1), 0 1px 3px 0 rgba(200, 207, 233, 1);
       border-radius: 7px;
@@ -79,6 +81,7 @@ app-create-edit-work-order-form {
         border: none;
         outline: none;
       }
+
       .ng-select-container {
         padding: 9px 0;
       }

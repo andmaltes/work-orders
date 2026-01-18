@@ -1,4 +1,5 @@
-<div class="work-orders-duration-row">
+<div #container class="work-orders-duration-row" (mousemove)="onMouseMove($event)">
+    <div *ngIf="workCenterId" class="work-orders-duration-row-add" [style.left.px]="mouseLeftPos" (click)="openCreateNewOrder()"></div>
     <div class="work-orders-duration-row-interval" [class.work-orders-duration-row-interval-today]="interval.isToday"
          *ngFor="let interval of intervals$ | async">
         <ng-container *ngFor="let workorder of workOrders$ | async; let i = index">
