@@ -91,6 +91,8 @@ export class WorkOrdersDurationRow implements OnInit {
     }
 
     openCreateNewOrder():void{
-        this.createEditWorkOrderModalServiceService.open(this.workCenterId);
+       const dateIndex = Math.round(this.mouseLeftPos/this.INTERVAL_WIDTH)
+        const date =this.timelineStateService.snapshot.intervals.at(dateIndex);
+        this.createEditWorkOrderModalServiceService.open(this.workCenterId, undefined, date?.intervalId);
     }
 }

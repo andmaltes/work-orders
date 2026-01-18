@@ -2,5 +2,6 @@
 export interface CreateEditWorkOrderState {
     open: boolean;
     selectedWorkOrderId: string;
-    seletedWorkCenterId: string
+    seletedWorkCenterId: string;
+    date?:number;
 }

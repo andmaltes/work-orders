@@ -9,6 +9,7 @@ export class CreateEditWorkOrderModalServiceService {
         open: false,
         selectedWorkOrderId: '',
         seletedWorkCenterId: '',
+        date:0
     });
 
     // Current State
@@ -26,12 +27,9 @@ export class CreateEditWorkOrderModalServiceService {
     );
 
 
-
-
-
     // Actions
-    open(workCenterId:string, workOrderId?: string) {
-        this.patchState({open:true, seletedWorkCenterId: workCenterId, selectedWorkOrderId: workOrderId});
+    open(workCenterId:string, workOrderId?: string, date? :number) {
+        this.patchState({open:true, seletedWorkCenterId: workCenterId, selectedWorkOrderId: workOrderId, date});
     }
 
     close() {

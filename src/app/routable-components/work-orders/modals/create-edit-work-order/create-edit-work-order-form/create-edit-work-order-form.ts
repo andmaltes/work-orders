@@ -13,6 +13,7 @@ import { CreateEditWorkOrderModalServiceService } from "../../../services/create
 import { combineLatest, combineLatestWith, filter, mergeMap, switchMap, tap } from "rxjs";
 import { dateToNgb, ngbToDate } from "../../../utils/date-interval.utils";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
+import { end } from "@popperjs/core";
 
 
 @Component({
@@ -47,12 +48,12 @@ export class CreateEditWorkOrderForm implements OnInit {
         (this.createEditWorkOrderModalServiceService.state$)
             .pipe(
                 filter((state) => state.open),
-                tap((state) => this.initForm(state.seletedWorkCenterId, state.selectedWorkOrderId)),
+                tap((state) => this.initForm(state.seletedWorkCenterId, state.selectedWorkOrderId, state.date)),
                 takeUntilDestroyed(this.destroyRef)
             ).subscribe()
     }
 
-    initForm(workCenterId: string, workOrderId?: string): void {
+    initForm(workCenterId: string, workOrderId?: string, date?:number): void {
         let workOrdersForCenter = this.timelineStateService.getWorkOrdersForWorkCenter$(workCenterId);
         let workOrder = this.timelineStateService.snapshot.workOrders.find((workOrder) => workOrder.docId == workOrderId);
         if (workOrder) {
@@ -92,6 +93,12 @@ export class CreateEditWorkOrderForm implements OnInit {
             );
 
         } else {
+            let startDate=null;
+            let endDate=null;
+            if(date){
+                startDate= dateToNgb(moment(date));
+                endDate= dateToNgb(moment(date).add(7, 'days'));
+            }
             //create mode
             this.workOrderForm = new FormGroup<CreateEditWorkOrderFormModel>({
                     workCenterId: new FormControl<string>(workCenterId, {
@@ -109,11 +116,11 @@ export class CreateEditWorkOrderForm implements OnInit {
                         nonNullable: true,
                         validators: Validators.required,
                     }),
-                    startDate: new FormControl<NgbDateStruct | null>(null, {
+                    startDate: new FormControl<NgbDateStruct | null>(startDate, {
                         nonNullable: true,
                         validators: Validators.required,
                     }),
-                    endDate: new FormControl<NgbDateStruct | null>(null, {
+                    endDate: new FormControl<NgbDateStruct | null>(endDate, {
                         nonNullable: true,
                         validators: Validators.required,
                     }),
@@ -150,7 +157,6 @@ export class CreateEditWorkOrderForm implements OnInit {
                     endDate: workOrderData?.endDate ? moment(ngbToDate(workOrderData?.endDate)).format("YYYY-MM-DD") : ''
                 }
             };
-            console.log(workOrderData?.workOrderId)
             if (workOrderData?.workOrderId) {
                 this.timelineStateService.updateWorkOrder(workOrder);
             } else {
