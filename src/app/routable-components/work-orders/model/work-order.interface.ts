@@ -11,11 +11,16 @@ export interface WorkOrderDocument {
 }
 
 export interface WorkOrderDocumentWithIntervals extends WorkOrderDocument {
-    // interval id means day or month or whatever is selected in the filter
-    // while number is the percentage of that interval
-    firstIntervalId?: string;
+    // interval datetime is the first day of the month, or the first day of the week or the day at first time,
+    // depending on the timescale.
+    firstIntervalDateTime?: number;
+    // This means, how much of the first interval needs to be removed in order to have accurate positioning
+    // (e.g., if the interval is monthly and the day is 15, then the bar will start in the middle of the interval)
     firstIntervalPercentage?: number;
+    // total number of intervals including whole first and whole last
     numberOfIntervals?: number;
+    // This means, how much of the last interval needs to be removed in order to have accurate positioning
+    // (e.g., if the interval is monthly and the day is 15, then the bar will finish in the middle of the interval)
     lastIntervalPercentage?: number;
 }
 

@@ -1,31 +1,132 @@
-.work-orders-duration-row {
-  display: flex;
-  position: relative;
-  height: 100%;
+@import '../../../../../styles/_variables';
 
-  &-interval {
+app-work-orders-duration-row {
+  .work-orders-duration-row {
+    display: flex;
+    position: relative;
+    height: 100%;
+    padding: 0 5px;
+
+    &-interval {
       flex: 0 0 130px;
-      border-right: 1px solid rgba(230, 235, 240, 1);
       height: 100%;
-  }
+      position: relative;
+      &-today {
+        border-left: 3px solid $today-separator-color;
+      }
+    }
 
-  .work-order-bar {
+    &-interval:not(:last-child) {
+      border-right: 1px solid $separator-color;
+    }
+
+
+    .work-order-bar {
       position: absolute;
-      height: 24px;
+      height: 38px;
       top: 50%;
       transform: translateY(-50%);
-      background-color: #4A90E2;
-      border-radius: 4px;
+      border-radius: 8px;
       display: flex;
       align-items: center;
       padding: 0 8px;
-      color: white;
-      font-size: 12px;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
+      gap: 4px;
       z-index: 1;
-      border: 1px solid rgba(255, 255, 255, 0.2);
-      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+
+      &-open {
+        box-shadow: 0 0 0 1px $work-orders-open-bar-shadow-color;
+        background-color: $work-orders-open-bar-bg-color;
+      }
+
+      &-in-progress {
+        box-shadow: 0 0 0 1px $work-orders-in-progress-bar-shadow-color;
+        background-color: $work-orders-in-progress-bar-bg-color;
+      }
+
+      &-complete {
+        box-shadow: 0 0 0 1px $work-orders-complete-bar-shadow-color;
+        background-color: $work-orders-complete-bar-bg-color;
+
+      }
+
+      &-blocked {
+        box-shadow: 0 0 0 1px $work-orders-blocked-bar-bg-color;
+        background-color: $work-orders-blocked-bar-bg-color;
+      }
+
+      &-label {
+        color: $work-orders-label-text-color;
+        font-family: CircularStd-Book, sans-serif;
+        font-size: 14px;
+        font-weight: 400;
+        flex-grow: 1;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        overflow: hidden;
+      }
+
+      &-tag {
+        padding: 2px 8px;
+        font-family: CircularStd-Book, sans-serif;
+        font-size: 14px;
+        font-weight: 400;
+        line-height: 18px;
+        border-radius: 5px;
+
+        &-open {
+          color: #00B0BF;
+          background-color: #E4FDFF;
+        }
+
+        &-in-progress {
+          color: #3E40DB;
+          background-color: #D6D8FF;
+        }
+
+        &-complete {
+          color: #08A268;
+          background-color: #E1FFCC;
+        }
+
+        &-blocked {
+          color: #B13600;
+          background-color: #FCEEB5;
+        }
+
+      }
+
+      &:hover {
+        .work-order-bar-options {
+          display: block;
+        }
+      }
+
+      &-options {
+        width: 24px;
+        height: 22px;
+        border-radius: 5px;
+        background-color: #F1F3F8;
+        text-align: center;
+        display: none;
+
+
+        &-container {
+          width: 24px;
+          height: 22px;
+          flex-shrink: 0;
+        }
+
+        img {
+          width: 12px;
+          height: auto;
+          margin: 0 auto;
+        }
+      }
+
+    }
+  }
+
+  .dropdown-toggle::after {
+    display: none;
   }
 }

@@ -1,0 +1,50 @@
+@import '../../../styles/variables';
+
+app-custom-selector {
+  ng-select {
+    height: 24px;
+
+    .ng-input {
+      display: none;
+    }
+
+    .ng-select-container {
+      border: none !important;
+      height: auto !important;
+      min-height: 0 !important;
+
+      &:hover {
+        box-shadow: none !important;
+      }
+
+      .ng-arrow-wrapper {
+        display: none;
+      }
+    }
+
+    .ng-value-container {
+      padding-right: 10px;
+      text-align: center;
+    }
+
+    .ng-dropdown-panel {
+      box-shadow: 0 0 0 1px rgba(104, 113, 150, 0.1), 0 2.5px 3px -1.5px rgba(200, 207, 233, 1), 0 4.5px 5px -1px rgba(216, 220, 235, 1);
+      border-radius: 5px;
+      background-color: rgba(255, 255, 255, 1);
+      border: none;
+      width: auto !important;
+      min-width: max-content;
+
+      .ng-option {
+        font-family: CircularStd-Book, sans-serif !important;
+        font-size: 14px !important;
+        font-weight: 400 !important;
+      }
+
+      .ng-option-selected {
+        background-color: rgba(255, 255, 255, 1) !important;
+        color: $filter-value-color !important;
+      }
+    }
+  }
+}

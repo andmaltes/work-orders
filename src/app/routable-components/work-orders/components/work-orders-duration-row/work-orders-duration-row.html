@@ -1,14 +1,42 @@
 <div class="work-orders-duration-row">
-    <div class="work-orders-duration-row-interval" *ngFor="let interval of intervals$ | async">
-    </div>
+    <div class="work-orders-duration-row-interval" [class.work-orders-duration-row-interval-today]="interval.isToday" *ngFor="let interval of intervals$ | async">
+        <ng-container *ngFor="let workorder of workOrders$ | async; let i = index">
+            <div class="work-order-bar"
+                 [class.work-order-bar-open]="workorder.data.status == 'open'"
+                 [class.work-order-bar-in-progress]="workorder.data.status == 'in-progress'"
+                 [class.work-order-bar-complete]="workorder.data.status == 'complete'"
+                 [class.work-order-bar-blocked]="workorder.data.status == 'blocked'"
+                 *ngIf="workorder.firstIntervalDateTime == interval.intervalId"
+                 [style.width.px]="calculateWidth(workorder)"
+                 [style.left.px]="calculateLeft(workorder)"
+            >
+                <div class="work-order-bar-label">
+                    {{ workorder.data.name }}
+                </div>
 
-    <ng-container *ngFor="let workorder of workOrders$ | async; let i = index">
-        <div class="work-order-bar"
-             *ngIf="workorder.firstIntervalId"
-             [style.left.px]="calculateLeft(workorder, (intervals$ | async) || [])"
-             [style.width.px]="calculateWidth(workorder)">
-            {{ workorder.data.name }}
-        </div>
-    </ng-container>
+                <div class="work-order-bar-tag work-order-bar-tag-open" *ngIf="workorder.data.status == 'open'">Open
+                </div>
+                <div class="work-order-bar-tag work-order-bar-tag-in-progress"
+                     *ngIf="workorder.data.status == 'in-progress'">In Progress
+                </div>
+                <div class="work-order-bar-tag work-order-bar-tag-complete" *ngIf="workorder.data.status == 'complete'">
+                    Complete
+                </div>
+                <div class="work-order-bar-tag work-order-bar-tag-blocked" *ngIf="workorder.data.status == 'blocked'">
+                    Blocked
+                </div>
+                <div class="work-order-bar-options-container" ngbDropdown container="body">
+                    <div class="work-order-bar-options" ngbDropdownToggle>
+                        <img src="ellipsis.png" alt="ellipsis">
+                    </div>
+
+                    <div ngbDropdownMenu>
+                        <button ngbDropdownItem (click)="edit()">Edit</button>
+                        <button ngbDropdownItem (click)="delete(workorder)">Delete</button>
+                    </div>
+                </div>
+            </div>
+        </ng-container>
+    </div>
 </div>
 

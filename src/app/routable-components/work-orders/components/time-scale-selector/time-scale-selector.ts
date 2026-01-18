@@ -3,36 +3,35 @@ import { NgSelectComponent } from "@ng-select/ng-select";
 import { FormsModule } from "@angular/forms";
 import { TimelineStateService } from "../../services/timeline-state.service";
 import { Timescale } from "../../model/timeline.state";
+import { CustomSelector, CustomSelectorOption } from "../../../../shared-components/custom-selector/custom-selector";
 
 @Component({
-  selector: 'app-time-scale-selector',
-  imports: [
-    NgSelectComponent,
-    FormsModule
-  ],
-  templateUrl: './time-scale-selector.html',
-  styleUrl: './time-scale-selector.scss',
-    encapsulation: ViewEncapsulation.None
+    selector: 'app-time-scale-selector',
+    imports: [
+        FormsModule,
+        CustomSelector
+    ],
+    templateUrl: './time-scale-selector.html',
+    styleUrl: './time-scale-selector.scss'
 })
 export class TimeScaleSelector {
-    constructor(private timelineStateService:TimelineStateService) {
+
+    zoomLevels: CustomSelectorOption<Timescale>[] = [
+        { id: 'day', label: 'Day', },
+        { id: 'week', label: 'Week', },
+        { id: 'month', label: 'Month', }
+    ];
+
+    selectedZoomLevel: CustomSelectorOption<Timescale> = {
+        id: 'day', label: 'Day',
+    };
+
+    constructor(private timelineStateService: TimelineStateService) {
 
     }
-  zoomLevels: ZoomLevel[] = [{
-   id:'day', label:'Day',},{
-   id:'week', label:'Week',},{
-   id:'month', label:'Month',
- }];
 
-  selectedZoomLevelId: ZoomLevel = {
-      id:'day', label:'Day',};
-
-  onTimeScaleChange(timeScale: ZoomLevel) {
-this.timelineStateService.setTimescale(timeScale.id)
-  }
-}
-
-interface ZoomLevel {
-    id:Timescale;
-    label:string;
+    onTimeScaleChange(timeScale: CustomSelectorOption<Timescale>) {
+        this.timelineStateService.setTimescale(timeScale.id)
+        this.selectedZoomLevel = timeScale;
+    }
 }

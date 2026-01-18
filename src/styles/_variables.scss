@@ -1,7 +1,32 @@
 // colors
 $title-color : #030929;
+$page-bg-color: #FFFFFF;
+
+// work orders table
+$work-orders-bg-color: #F7F9FC;
+$work-orders-header-text-color: #687196;
+$filter-label-color: #687196;
+$filter-label-bg-color: #F1F3F8;
+$filter-value-color: #3E40DB;
+$separator-color: #E6EBF0;
+$today-separator-color: #D4D7FF;
+$work-orders-name-hover-bg-color:#F1F3F8;
+$work-orders-hover-bg-color: #EEF0FF;
+
+// work orders bars colors
+$work-orders-label-text-color: #030929;
+
+$work-orders-open-bar-shadow-color: #DEE0FF;
+$work-orders-open-bar-bg-color: #EDEEFF;
+$work-orders-in-progress-bar-shadow-color: #DEE0FF;
+$work-orders-in-progress-bar-bg-color: #EDEEFF;
+$work-orders-complete-bar-shadow-color: #D1FAB3;
+$work-orders-complete-bar-bg-color: #F8FFF3;
+$work-orders-blocked-bar-bg-color: #FFF5CF;
+$work-orders-blocked-bar-bg-color: #FFFCF1;
+
+
 
 
 // heights
-
 $work-orders-row-height: 48px;

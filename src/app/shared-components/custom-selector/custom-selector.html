@@ -1,0 +1,10 @@
+<ng-select [items]="items"
+           [(ngModel)]="selectedItem"
+           [clearable]="false"
+           [searchable]="false"
+           (change)="itemSelected($event)"
+>
+    <ng-template ng-label-tmp let-item="item">
+        <ng-content></ng-content>
+    </ng-template>
+</ng-select>

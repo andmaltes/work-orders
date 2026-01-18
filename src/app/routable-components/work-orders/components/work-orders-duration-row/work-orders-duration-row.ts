@@ -1,27 +1,33 @@
-import { Component, Input, OnInit } from '@angular/core';
-import { Observable, tap } from "rxjs";
-import { map } from "rxjs/operators";
-import moment from 'moment';
+import { Component, Input, OnInit, ViewEncapsulation } from '@angular/core';
+import { Observable } from "rxjs";
 import { TimelineStateService } from "../../services/timeline-state.service";
-import { AsyncPipe, JsonPipe, NgForOf, NgIf } from "@angular/common";
+import { AsyncPipe, NgForOf, NgIf } from "@angular/common";
 import { WorkOrderDocument, WorkOrderDocumentWithIntervals } from "../../model/work-order.interface";
+import { NgbDropdown, NgbDropdownItem, NgbDropdownMenu, NgbDropdownToggle } from "@ng-bootstrap/ng-bootstrap";
+import { Interval } from "../../model/timeline.state";
 
 @Component({
     selector: 'app-work-orders-duration-row',
     imports: [
         NgForOf,
         AsyncPipe,
-        JsonPipe,
-        NgIf
+        NgIf,
+        NgbDropdown,
+        NgbDropdownToggle,
+        NgbDropdownMenu,
+        NgbDropdownItem
     ],
     templateUrl: './work-orders-duration-row.html',
     styleUrl: './work-orders-duration-row.scss',
+    encapsulation: ViewEncapsulation.None
 })
 export class WorkOrdersDurationRow implements OnInit {
-
     @Input() workCenterId: string = '';
-    workOrders$: Observable<WorkOrderDocumentWithIntervals[]> | undefined;
-    intervals$: Observable<string[]> | undefined;
+
+    workOrders$!: Observable<WorkOrderDocumentWithIntervals[]>;
+    intervals$!: Observable<Interval[]>;
+
+    // As per designs, every interval column is 130px wide
     private readonly INTERVAL_WIDTH = 130;
 
     constructor(private timelineStateService: TimelineStateService) {
@@ -29,25 +35,42 @@ export class WorkOrdersDurationRow implements OnInit {
 
     ngOnInit(): void {
         this.workOrders$ = this.timelineStateService.getWorkOrdersForWorkCenterWithIntervals(this.workCenterId);
-
         this.intervals$ = this.timelineStateService.intervals$;
     }
 
-    calculateLeft(workorder: WorkOrderDocumentWithIntervals, intervals: string[]): number {
-        const index = intervals.indexOf(workorder.firstIntervalId!);
-        if (index === -1) return 0;
+    /* This method calculates the width of the work order duration as follows:
+    * 1. The total number of intervals multiplied by the interval width
+    * 2. Subtract the percentage of the first and the last interval that is not beign shown.
+    *    This happens when the total duration is not totally covering the interval. For intance,
+    *    when the order dates are Jan 13 to Feb 20, and we are in the montly view, the bar is not fully
+    *    covering Jan and Feb
+    * */
+    calculateWidth(workorder: WorkOrderDocumentWithIntervals): number {
+        if (!workorder.numberOfIntervals) {
+            return 0;
+        }
 
-        const firstIntervalOffset = (100 - (workorder.firstIntervalPercentage || 0)) / 100 * this.INTERVAL_WIDTH;
-        return (index * this.INTERVAL_WIDTH) + firstIntervalOffset;
+        let totalIntervalsWidth = workorder.numberOfIntervals * this.INTERVAL_WIDTH;
+
+        if(workorder.firstIntervalPercentage !== 1) {
+            totalIntervalsWidth=totalIntervalsWidth-  (1 - (workorder.firstIntervalPercentage || 0))  * this.INTERVAL_WIDTH;
+        }
+
+        if(workorder.lastIntervalPercentage !== 0) {
+            totalIntervalsWidth=totalIntervalsWidth-  (1 - (workorder.lastIntervalPercentage || 0)) * this.INTERVAL_WIDTH;
+        }
+
+
+        return totalIntervalsWidth ;
     }
 
-    calculateWidth(workorder: WorkOrderDocumentWithIntervals): number {
-        if (!workorder.numberOfIntervals) return 0;
+    // When the duration is not totally covering the interval, this method calculates the left position of the bar
+    calculateLeft(workorder: WorkOrderDocumentWithIntervals): number {
+        return  (1 - (workorder.firstIntervalPercentage || 0))  * this.INTERVAL_WIDTH;
+    }
 
-        const totalIntervalsWidth = workorder.numberOfIntervals * this.INTERVAL_WIDTH;
-        const firstIntervalUnused = (100 - (workorder.firstIntervalPercentage || 0)) / 100 * this.INTERVAL_WIDTH;
-        const lastIntervalUnused = (100 - (workorder.lastIntervalPercentage || 0)) / 100 * this.INTERVAL_WIDTH;
-
-        return totalIntervalsWidth - firstIntervalUnused - lastIntervalUnused;
+    edit():void{}
+    delete(workorder:WorkOrderDocument):void{
+        this.timelineStateService.deleteWorkOrder(workorder.docId);
     }
 }

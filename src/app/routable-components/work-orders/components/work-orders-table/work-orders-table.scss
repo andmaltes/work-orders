@@ -1,22 +1,73 @@
 @import '../../../../../styles/_variables';
 
 .work-orders-table {
-  flex-basis: 380px;
-  flex-shrink: 0;
-  flex-grow: 0;
-  height: 100%;
+  overflow: scroll;
+  border-top: 1px solid $separator-color;
+  border-left: 1px solid $separator-color;
+  border-right: 1px solid $separator-color;
+  height: calc(100vh - 225px);
+  background-color: $work-orders-bg-color;
+  display: flex;
+  flex-direction: column;
 
   &-header {
-    color: rgba(104, 113, 150, 1);
+    color: $work-orders-header-text-color;
     font-family: CircularStd-Regular, sans-serif;
     font-size: 14px;
     font-weight: 500;
-    padding: 8px 31px;
-    border-bottom: 1px solid rgba(230, 235, 240, 1);
+    border-bottom: 1px solid $separator-color;
+    display: flex;
+    width: max-content;
+
+    &-interval-row {
+      display: flex;
+      padding: 0 5px;
+      background-color: $page-bg-color;
+    }
+
+    &-current-badge {
+      border-radius: 5px;
+      background-color: #D4D7FF;
+      position: absolute;
+      z-index: 2;
+      padding: 2px 8px;
+      background-color: rgba(212, 215, 255, 1);
+      color: rgba(62, 64, 219, 1);
+      font-family: CircularStd-Book, sans-serif;
+      font-size: 14px;
+      font-weight: 400;
+      top: 38px;
+      white-space: nowrap;
+    }
+
+    .work-center {
+      flex: 0 0 380px;
+      position: sticky;
+      left: 0;
+      z-index: 2;
+      padding: 8px 31px;
+      border-right: 1px solid $separator-color;
+    }
+
+    .work-orders-duration-interval {
+      flex: 0 0 130px;
+      height: 100%;
+      text-align: center;
+      padding: 8px 0;
+      position: relative;
+    }
+
+    &-cell {
+      background-color: $page-bg-color;
+      color: #687196;
+      font-family: CircularStd-Regular, sans-serif;
+      font-size: 14px;
+      font-weight: 500;
+    }
   }
 
   &-column {
-    border: 1px solid rgba(230, 235, 240, 1);
+    border: 1px solid $separator-color;
     height: 100%;
   }
 
@@ -26,13 +77,38 @@
     font-family: CircularStd-Regular, sans-serif;
     font-size: 14px;
     font-weight: 500;
-    border-bottom: 1px solid rgba(230, 235, 240, 1);
     display: flex;
+    width: max-content;
+
+    &:hover:not(.no-hover) {
+      background-color: $work-orders-hover-bg-color;
+
+
+      .work-order-name {
+        background-color: $work-orders-name-hover-bg-color;
+      }
+    }
+
+    &.fill-remaining-space {
+      flex-grow: 1;
+      flex-shrink: 1;
+
+      .work-order-name {
+        border-bottom: none;
+      }
+    }
   }
 
   .work-order-name {
     padding: 16px 31px;
-    flex: 0 0 380px
+    flex: 0 0 380px;
+    position: sticky;
+    left: 0;
+    background-color: $page-bg-color;
+    z-index: 2;
+    line-height: 17px;
+    border-bottom: 1px solid $separator-color;
+    border-right: 1px solid $separator-color;
   }
 
 }
