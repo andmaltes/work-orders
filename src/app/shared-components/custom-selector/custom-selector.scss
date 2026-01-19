@@ -18,6 +18,23 @@ app-custom-selector {
 
     }
 
+    .ng-select.ng-select-opened.ng-select-bottom > .ng-select-container {
+      border-bottom-left-radius: 5px !important;
+      border-bottom-right-radius: 5px !important;
+    }
+
+    .ng-dropdown-panel.ng-select-bottom {
+      margin-top: 5px;
+      border: none;
+    }
+
+    .ng-dropdown-panel-items {
+      box-shadow: 0 0 0 1px rgba(104, 113, 150, 0.1), 0 2.5px 3px -1.5px rgba(200, 207, 233, 1), 0 4.5px 5px -1px rgba(216, 220, 235, 1);
+      border-radius: 5px;
+      background-color: rgba(255, 255, 255, 1);
+      border: none;
+    }
+
     .ng-value-container {
       padding-right: 10px;
       text-align: center;

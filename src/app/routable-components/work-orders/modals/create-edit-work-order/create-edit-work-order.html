@@ -1,6 +1,5 @@
-<div class="create-edit-work-order-backdrop" (click)="close()" [@opacityInOut]="(isOpen$ | async) ? 'visible' : 'hidden'"></div>
-<div class="create-edit-work-order-container"   [@slideInOut]="(isOpen$ | async) ? 'in' : 'out'">
-
-<app-create-edit-work-order-form></app-create-edit-work-order-form>
-
+<div class="create-edit-work-order-backdrop" (click)="close()"
+     [@opacityInOut]="(isOpen$ | async) ? 'visible' : 'hidden'"></div>
+<div class="create-edit-work-order-container" [@slideInOut]="(isOpen$ | async) ? 'in' : 'out'">
+    <app-create-edit-work-order-form></app-create-edit-work-order-form>
 </div>

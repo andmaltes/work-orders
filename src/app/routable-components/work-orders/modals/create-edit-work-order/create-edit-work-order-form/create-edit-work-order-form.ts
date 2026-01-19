@@ -2,7 +2,7 @@ import { Component, DestroyRef, inject, OnInit, ViewEncapsulation } from '@angul
 import { AbstractControl, FormControl, FormGroup, ReactiveFormsModule, Validators } from "@angular/forms";
 import { WorkOrderDocument, WorkOrderStatus } from "../../../model/work-order.interface";
 import { CreateEditWorkOrderFormModel } from "../model/create-edit-work-order.model";
-import { NgbDateStruct, NgbInputDatepicker } from "@ng-bootstrap/ng-bootstrap";
+import { NgbDateParserFormatter, NgbDateStruct, NgbInputDatepicker } from "@ng-bootstrap/ng-bootstrap";
 import { CustomSelector, CustomSelectorOption } from "../../../../../shared-components/custom-selector/custom-selector";
 import { JsonPipe, NgForOf, NgIf } from "@angular/common";
 import { WorkOrderStatusBadge } from "../../../../../shared-components/work-order-status-badge/work-order-status-badge";
@@ -14,6 +14,7 @@ import { combineLatest, combineLatestWith, filter, mergeMap, switchMap, tap } fr
 import { dateToNgb, ngbToDate } from "../../../utils/date-interval.utils";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 import { end } from "@popperjs/core";
+import { CustomNgbDatepickerParser } from "../../../utils/custom-ngb-datepicker-parser";
 
 
 @Component({
@@ -25,11 +26,12 @@ import { end } from "@popperjs/core";
         NgIf,
         WorkOrderStatusBadge,
     ],
+    providers: [ { provide: NgbDateParserFormatter, useClass: CustomNgbDatepickerParser }],
     templateUrl: './create-edit-work-order-form.html',
     styleUrl: './create-edit-work-order-form.scss',
     encapsulation: ViewEncapsulation.None
 })
-export class CreateEditWorkOrderForm implements OnInit {
+export class CreateEditWorkOrderForm  {
 
     workOrderForm?: FormGroup<CreateEditWorkOrderFormModel>;
 
@@ -39,19 +41,16 @@ export class CreateEditWorkOrderForm implements OnInit {
         { id: 'in-progress', label: 'In Progress', },
         { id: 'complete', label: 'Complete', },
     ];
-    private destroyRef = inject(DestroyRef);
 
     constructor(private timelineStateService: TimelineStateService, private createEditWorkOrderModalServiceService: CreateEditWorkOrderModalServiceService) {
-    }
-
-    ngOnInit(): void {
-        (this.createEditWorkOrderModalServiceService.state$)
+        this.createEditWorkOrderModalServiceService.state$
             .pipe(
                 filter((state) => state.open),
                 tap((state) => this.initForm(state.seletedWorkCenterId, state.selectedWorkOrderId, state.date)),
-                takeUntilDestroyed(this.destroyRef)
+                takeUntilDestroyed()
             ).subscribe()
     }
+
 
     initForm(workCenterId: string, workOrderId?: string, date?:number): void {
         let workOrdersForCenter = this.timelineStateService.getWorkOrdersForWorkCenter$(workCenterId);

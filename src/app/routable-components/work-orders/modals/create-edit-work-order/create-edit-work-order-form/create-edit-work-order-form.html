@@ -9,8 +9,11 @@
             <button type="button" class="work-order-form-cancel" (click)="onCancel()">
                 Cancel
             </button>
-            <button type="submit" class="work-order-form-create" (click)="onCreate()">
+            <button *ngIf="!workOrderForm?.value?.workOrderId" type="submit" class="work-order-form-create" (click)="onCreate()">
                 Create
+            </button>
+            <button *ngIf="workOrderForm?.value?.workOrderId" type="submit" class="work-order-form-create" (click)="onCreate()">
+                Update
             </button>
         </div>
     </div>
@@ -19,6 +22,7 @@
         <!-- Work Order Name -->
         <div class="work-order-form-label">Work Order Name</div>
         <input
+                class="work-order-name-input"
                 type="text"
                 formControlName="name"
                 placeholder="Enter Work Order Name"
@@ -41,6 +45,7 @@
         <div class="work-order-form-label">Start Date</div>
         <input type="text" ngbDatepicker
                #dStart="ngbDatepicker"
+               [class.work-order-datepicker-open]="dStart.isOpen()"
                formControlName="startDate" readonly (click)="dStart.toggle()"/>
         <div class="work-order-form-error" *ngIf="workOrderForm.get('startDate')?.touched && workOrderForm.get('startDate')?.invalid">
             Start Date is required
@@ -50,6 +55,7 @@
         <div class="work-order-form-label">End Date</div>
         <input type="text" ngbDatepicker
                #dEnd="ngbDatepicker"
+               [class.work-order-datepicker-open]="dEnd.isOpen()"
                formControlName="endDate" readonly (click)="dEnd.toggle()"/>
         <div  class="work-order-form-error" *ngIf="workOrderForm.get('endDate')?.touched && workOrderForm.get('endDate')?.invalid">
             End Date is required
