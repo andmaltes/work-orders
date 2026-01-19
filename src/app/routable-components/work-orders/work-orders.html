@@ -1,6 +1,9 @@
 <div class="work-orders-container">
     <h3 class="section-title">Work Orders</h3>
+    <div class="work-orders-filters">
     <app-time-scale-selector></app-time-scale-selector>
+        <div class="work-orders-today" (click)="scrollToToday()" >Today</div>
+    </div>
     <app-work-orders-table-page></app-work-orders-table-page>
 </div>
 
