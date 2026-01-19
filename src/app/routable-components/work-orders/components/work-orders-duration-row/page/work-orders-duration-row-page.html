@@ -1,5 +1,5 @@
-<app-work-orders-duration-row [workCenterId]="_workCenterId"
-                              [workOrders]="(workOrders$ | async) || []"
+<app-work-orders-duration-row [workCenterId]="workCenterId"
+                              [workOrders]="workOrders"
                               [intervals]="(intervals$ | async) || []"
                               (onCreate)="openCreateNewOrder($event)"
                               (onEdit)="edit($event)"

@@ -1,6 +1,6 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { WorkOrdersDurationRow } from "../component/work-orders-duration-row";
-import { Observable } from "rxjs";
+import { map, Observable } from "rxjs";
 import { Interval } from "../../../model/timeline.state";
 import { WorkOrderDocument, WorkOrderDocumentWithIntervals } from "../../../model/work-order.interface";
 import { TimelineStateService } from "../../../services/timeline-state.service";
@@ -16,22 +16,18 @@ import { AsyncPipe } from "@angular/common";
     templateUrl: './work-orders-duration-row-page.html',
     styleUrl: './work-orders-duration-row-page.scss',
 })
-export class WorkOrdersDurationRowPage {
-    @Input({ required: true })
-    set workCenterId(id: string) {
-        this._workCenterId = id;
-        this.workOrders$ =
-            this.timelineStateService.getWorkOrdersForWorkCenterWithIntervals(id);
-    }
-
-    workOrders$!: Observable<WorkOrderDocumentWithIntervals[]>;
+export class WorkOrdersDurationRowPage  implements  OnInit {
+    @Input({ required: true }) workCenterId!: string;
+    @Input({ required: true }) workOrders: WorkOrderDocumentWithIntervals[] = [];
     intervals$: Observable<Interval[]>;
 
-    _workCenterId!: string;
 
     constructor(private timelineStateService: TimelineStateService,
                 private createEditWorkOrderModalServiceService: CreateEditWorkOrderModalServiceService) {
         this.intervals$ = this.timelineStateService.intervals$;
+    }
+    ngOnInit():void {
+
     }
 
 
@@ -45,6 +41,6 @@ export class WorkOrdersDurationRowPage {
 
     openCreateNewOrder(dateIndex: number): void {
         const date = this.timelineStateService.snapshot.intervals.at(dateIndex);
-        this.createEditWorkOrderModalServiceService.open(this._workCenterId, undefined, date?.intervalId);
+        this.createEditWorkOrderModalServiceService.open(this.workCenterId, undefined, date?.intervalId);
     }
 }

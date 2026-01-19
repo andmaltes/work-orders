@@ -1,4 +1,5 @@
 <app-work-orders-table
-        [workCenters]="(workCenters$|async )?? []"
-        [intervals]="(intervals$|async )?? []"
+                       [workCenters]="(workCenters$|async )?? []"
+                       [intervals]="(intervals$|async )?? []"
+                       [workOrders]="(workOrders$ | async) ?? {}"
 ></app-work-orders-table>

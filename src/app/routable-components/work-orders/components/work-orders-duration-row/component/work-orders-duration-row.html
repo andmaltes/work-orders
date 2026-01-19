@@ -3,8 +3,7 @@
          (click)="openCreateNewOrder()"></div>
     <div class="work-orders-duration-row-interval" [class.work-orders-duration-row-interval-today]="interval.isToday"
          *ngFor="let interval of intervals">
-        <ng-container *ngFor="let workorder of workOrders; let i = index">
-
+        <ng-container *ngFor="let workorder of workOrders;">
             <div class="work-order-bar"
                  [class.work-order-bar-open]="workorder.data.status == 'open'"
                  [class.work-order-bar-in-progress]="workorder.data.status == 'in-progress'"

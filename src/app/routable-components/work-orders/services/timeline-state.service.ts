@@ -15,6 +15,8 @@ import { INTERVAL_WIDTH } from "../model/const";
 import { TimelinePersistanceService } from "./timeline-persistance.service";
 import { Time } from "@angular/common";
 import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
+import { TimelineScrollService } from "./timeline-scroll.service";
+import { WorkCenterDocument } from "../model/work-center.interface";
 
 
 // This service is a simple state management system for the timeline view. It is intented to simulate NgRx's store
@@ -37,11 +39,14 @@ export class TimelineStateService {
         // load from local storage or create a new state
         let storeState = this.timelinePersistanceService.loadFromLocalStorage();
         if (storeState) {
-            this.patchState(storeState);
+            this.patchState({
+                ...storeState,
+                visibleIntervalsFuture: 7,
+                visibleIntervalsPast: 7,
+            });
             this.setTimescale(storeState.timescale);
-        } else {
-            this.setTimescale('day');
         }
+        this.setTimescale('day');
         // subscribe to state changes and persist them in local storage
         this.state$.pipe(
             takeUntilDestroyed()
@@ -81,17 +86,29 @@ export class TimelineStateService {
             }))
     }
 
-
-    getWorkOrdersForWorkCenterWithIntervals(workCenterId: string): Observable<WorkOrderDocumentWithIntervals[]> {
+    getWorkOrdersByWorkCenterWithIntervals(): Observable<{ [workCenterId: string]: WorkOrderDocumentWithIntervals[] }> {
         return this.state$.pipe(
-            map(({ workOrders, timescale, visibleIntervalsPast, visibleIntervalsFuture }: TimelineState) => {
+            map(({
+                     workCenters,
+                     workOrders,
+                     timescale,
+                     visibleIntervalsPast,
+                     visibleIntervalsFuture
+                 }: TimelineState) => {
+
                 const today = moment().startOf(timescale);
                 const viewStart = today.clone().subtract(visibleIntervalsPast, timescale).startOf(timescale);
                 const viewEnd = today.clone().add(visibleIntervalsFuture, timescale).endOf(timescale);
-                const orders = this.getWorkOrdersForWorkCenter(workOrders, workCenterId)
 
-                const ordersWithIntervals = orders.map((order: WorkOrderDocument) => this.computeOrderIntervals(order, viewStart, viewEnd, timescale));
-                return this.calculateOrderCollitions(ordersWithIntervals, timescale, viewEnd);
+                const result: { [key: string]: WorkOrderDocumentWithIntervals[] } = {};
+
+                workCenters.forEach((workCenter: WorkCenterDocument) => {
+                    const orders = this.getWorkOrdersForWorkCenter(workOrders, workCenter.docId)
+                    const ordersWithIntervals = orders.map((order: WorkOrderDocument) => this.computeOrderIntervals(order, viewStart, viewEnd, timescale));
+                    result[workCenter.docId] = this.calculateOrderCollitions(ordersWithIntervals, timescale, viewEnd);
+                })
+                return result;
+
             })
         );
     }
@@ -200,6 +217,25 @@ export class TimelineStateService {
         this.patchState({
             workOrders: this.snapshot.workOrders.filter(o => o.docId !== id)
         });
+    }
+
+    increaseViewPoint(direction: 'past' | 'future'): void {
+        let newState: Partial<TimelineState> = {
+            visibleIntervalsPast: this.snapshot.visibleIntervalsPast,
+            visibleIntervalsFuture: this.snapshot.visibleIntervalsFuture,
+        }
+        switch (direction) {
+            case 'past':
+                newState.visibleIntervalsPast = this.snapshot.visibleIntervalsPast + 7;
+                break;
+            case 'future':
+                newState.visibleIntervalsFuture = this.snapshot.visibleIntervalsFuture + 7;
+                break;
+        }
+        newState.intervals = calculateIntervals(this.snapshot.timescale,
+            newState.visibleIntervalsPast ?? this.snapshot.visibleIntervalsPast,
+            newState.visibleIntervalsFuture ?? this.snapshot.visibleIntervalsFuture);
+        this.patchState(newState);
     }
 
     //  Mutators or Reducers

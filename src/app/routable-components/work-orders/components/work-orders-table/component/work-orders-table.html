@@ -1,8 +1,11 @@
-
 <div class="work-orders-table"  #scrollContainer>
     <div class="work-orders-table-header">
         <div class="work-orders-table-header-cell work-center"> Work Center</div>
+        <!-- Left Sentinel -->
+        <div #scrollSentinelLeft style="width: 1px; flex-shrink: 0;"></div>
         <div class="work-orders-table-header-interval-row">
+
+           <!-- Intervals-->
             <div class="work-orders-table-header-cell work-orders-duration-interval"
                  *ngFor="let interval of intervals">
                 {{ interval.formattedName }}
@@ -10,13 +13,17 @@
                     <span>Current {{interval.timescale}}</span>
                 </div>
             </div>
+            <!-- Right Sentinel -->
+            <div #scrollSentinelRight style="width: 1px; flex-shrink: 0;"></div>
         </div>
     </div>
     <div class="work-orders-table-row" *ngFor="let workCenterDocument of workCenters ">
         <div class="work-order-name">{{ workCenterDocument.data.name }}</div>
 
         <app-work-orders-duration-row-page style="flex-grow: 1"
-                                      [workCenterId]="workCenterDocument.docId"></app-work-orders-duration-row-page>
+                                      [workCenterId]="workCenterDocument.docId"
+                                      [workOrders]="workOrders[workCenterDocument.docId] ?? []"
+        ></app-work-orders-duration-row-page>
     </div>
 
     <!--    One empty row at the end filling the remaining space in the screen (if any)-->
