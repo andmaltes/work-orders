@@ -13,7 +13,7 @@
 
   &-header {
     color: $work-orders-header-text-color;
-    font-family: CircularStd-Regular, sans-serif;
+    font-family: "Circular-Std", sans-serif;
     font-size: 14px;
     font-weight: 500;
     border-bottom: 1px solid $separator-color;
@@ -34,7 +34,7 @@
       padding: 2px 8px;
       background-color: rgba(212, 215, 255, 1);
       color: rgba(62, 64, 219, 1);
-      font-family: CircularStd-Book, sans-serif;
+      font-family: "Circular-Std", sans-serif;
       font-size: 14px;
       font-weight: 400;
       top: 38px;
@@ -61,7 +61,7 @@
     &-cell {
       background-color: $page-bg-color;
       color: #687196;
-      font-family: CircularStd-Regular, sans-serif;
+      font-family: "Circular-Std", sans-serif;
       font-size: 14px;
       font-weight: 500;
     }
@@ -75,7 +75,7 @@
   &-row {
     height: $work-orders-row-height;
     color: rgba(3, 9, 41, 1);
-    font-family: CircularStd-Regular, sans-serif;
+    font-family: "Circular-Std", sans-serif;
     font-size: 14px;
     font-weight: 500;
     display: flex;

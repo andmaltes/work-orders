@@ -68,7 +68,7 @@ export class CreateEditWorkOrderForm  {
                     }),
                     name: new FormControl<string>(workOrder.data.name, {
                         nonNullable: true,
-                        validators: [Validators.required, Validators.maxLength(100)],
+                        validators: [Validators.required],
                     }),
                     status: new FormControl<WorkOrderStatus>(workOrder.data.status, {
                         nonNullable: true,
