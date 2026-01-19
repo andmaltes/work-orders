@@ -1,0 +1,7 @@
+<div *ngIf="workOrder">
+    <div class="work-order-tooltip">
+        <div class="work-order-tooltip-name">{{ workOrder.data.name }}</div>
+        <div class="work-order-tooltip-date">{{ workOrder.data.startDate }} - {{ workOrder.data.endDate }}</div>
+        <app-work-order-status-badge [orderStatus]="workOrder.data.status"></app-work-order-status-badge>
+    </div>
+</div>

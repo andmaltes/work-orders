@@ -4,7 +4,12 @@
     <div class="work-orders-duration-row-interval" [class.work-orders-duration-row-interval-today]="interval.isToday"
          *ngFor="let interval of intervals">
         <ng-container *ngFor="let workorder of workOrders;">
+            <ng-template #htmlContent>
+                <app-work-orders-details [workOrder]="workorder"></app-work-orders-details>
+            </ng-template>
             <div class="work-order-bar"
+                 [ngbTooltip]="htmlContent"
+                 tooltipClass="order-details-tooltip"
                  [class.work-order-bar-open]="workorder.data.status == 'open'"
                  [class.work-order-bar-in-progress]="workorder.data.status == 'in-progress'"
                  [class.work-order-bar-complete]="workorder.data.status == 'complete'"
@@ -21,10 +26,12 @@
                         {{ workorder.data.name }}
                     </div>
 
-                    <app-work-order-status-badge *ngIf="workorder.hasEnoughtSpace || (!workorder.hasEnoughtSpace && (workorder.intervalsUntilNextCollision ?? 0) > 0)"
-                                                 [orderStatus]="workorder.data.status"></app-work-order-status-badge>
+                    <app-work-order-status-badge
+                            *ngIf="workorder.hasEnoughtSpace || (!workorder.hasEnoughtSpace && (workorder.intervalsUntilNextCollision ?? 0) > 0)"
+                            [orderStatus]="workorder.data.status"></app-work-order-status-badge>
 
-                    <div *ngIf="workorder.hasEnoughtSpace  || (!workorder.hasEnoughtSpace && (workorder.intervalsUntilNextCollision ?? 0) > 0)" class="work-order-bar-options-container" ngbDropdown
+                    <div *ngIf="workorder.hasEnoughtSpace  || (!workorder.hasEnoughtSpace && (workorder.intervalsUntilNextCollision ?? 0) > 0)"
+                         class="work-order-bar-options-container" ngbDropdown
                          container="body">
                         <div class="work-order-bar-options" ngbDropdownToggle>
                             <img src="ellipsis.png" alt="ellipsis">

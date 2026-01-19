@@ -130,4 +130,17 @@ app-work-orders-duration-row {
   .dropdown-toggle::after {
     display: none;
   }
+
+  .order-details-tooltip .tooltip-inner {
+    box-shadow: 0 5px 15px 0 rgba(216, 220, 235, 1), 0 2.5px 3px -1.5px rgba(200, 207, 233, 1), 0 4.5px 5px -1px rgba(216, 220, 235, 1);
+    border-radius: 12px;
+    background-color: #ffffff;
+    max-width: 600px;
+    width: max-content;
+  }
+
+  .order-details-tooltip.bs-tooltip-top .tooltip-arrow::before {
+    border-top-color: #ffffff;
+  }
+
 }

@@ -10,11 +10,18 @@ import {
 } from '@angular/core';
 import { Observable } from "rxjs";
 import { AsyncPipe, NgForOf, NgIf } from "@angular/common";
-import { NgbDropdown, NgbDropdownItem, NgbDropdownMenu, NgbDropdownToggle } from "@ng-bootstrap/ng-bootstrap";
+import {
+    NgbDropdown,
+    NgbDropdownItem,
+    NgbDropdownMenu,
+    NgbDropdownToggle,
+    NgbTooltip
+} from "@ng-bootstrap/ng-bootstrap";
 import { WorkOrderDocument, WorkOrderDocumentWithIntervals } from "../../../model/work-order.interface";
 import { Interval } from "../../../model/timeline.state";
 import { WorkOrderStatusBadge } from "../../../../../shared-components/work-order-status-badge/work-order-status-badge";
 import { INTERVAL_WIDTH } from "../../../model/const";
+import { WorkOrdersDetails } from "../../work-orders-details/work-orders-details";
 
 @Component({
     selector: 'app-work-orders-duration-row',
@@ -25,7 +32,9 @@ import { INTERVAL_WIDTH } from "../../../model/const";
         NgbDropdownToggle,
         NgbDropdownMenu,
         NgbDropdownItem,
-        WorkOrderStatusBadge
+        WorkOrderStatusBadge,
+        NgbTooltip,
+        WorkOrdersDetails
     ],
     templateUrl: './work-orders-duration-row.html',
     styleUrl: './work-orders-duration-row.scss',

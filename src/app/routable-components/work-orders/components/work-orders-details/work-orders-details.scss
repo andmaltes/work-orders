@@ -1,0 +1,12 @@
+@import '../../../../../styles/_variables';
+
+.work-order-tooltip {
+  display: flex;
+  gap: 10px;
+  font-family: "Circular-Std", sans-serif;
+  font-size: 14px;
+  font-weight: 400;
+  &-name, &-date {
+    color: $modal-title-color;
+  }
+}
