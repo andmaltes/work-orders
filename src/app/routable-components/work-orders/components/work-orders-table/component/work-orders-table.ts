@@ -21,15 +21,16 @@ import { Interval } from "../../../model/timeline.state";
     styleUrl: './work-orders-table.scss',
 })
 export class WorkOrdersTable implements AfterViewInit {
-    @Input() workCenters: WorkCenterDocument[]=[];
-    @Input() intervals: Interval[]=[];
+    @Input() workCenters: WorkCenterDocument[] = [];
+    @Input() intervals: Interval[] = [];
 
     @ViewChild('scrollContainer') scrollContainer!: ElementRef<HTMLDivElement>;
 
     ngAfterViewInit(): void {
         this.scrollToToday();
     }
-     scrollToToday() {
+
+    scrollToToday() {
         const container = this.scrollContainer?.nativeElement;
         if (!container) return;
 
@@ -42,4 +43,5 @@ export class WorkOrdersTable implements AfterViewInit {
             });
         }
     }
+
 }

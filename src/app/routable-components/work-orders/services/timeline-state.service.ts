@@ -12,17 +12,16 @@ import {
 } from "../utils/date-interval.utils";
 import { calculateLeft, calculateWidth } from "../utils/bar-size.utils";
 import { INTERVAL_WIDTH } from "../model/const";
+import { TimelinePersistanceService } from "./timeline-persistance.service";
+import { Time } from "@angular/common";
+import { takeUntilDestroyed } from "@angular/core/rxjs-interop";
 
 
 // This service is a simple state management system for the timeline view. It is intented to simulate NgRx's store
 // wihtout all the boilerplate.
 // In bigger apps, I would use NgRx.
-
 @Injectable({ providedIn: 'root' })
 export class TimelineStateService {
-    constructor() {
-        this.setTimescale('day')
-    }
 
     // State
     private readonly state$ = new BehaviorSubject<TimelineState>({
@@ -33,6 +32,23 @@ export class TimelineStateService {
         visibleIntervalsPast: 7,
         visibleIntervalsFuture: 7
     });
+
+    constructor(private timelinePersistanceService: TimelinePersistanceService) {
+        // load from local storage or create a new state
+        let storeState = this.timelinePersistanceService.loadFromLocalStorage();
+        if (storeState) {
+            this.patchState(storeState);
+            this.setTimescale(storeState.timescale);
+        } else {
+            this.setTimescale('day');
+        }
+        // subscribe to state changes and persist them in local storage
+        this.state$.pipe(
+            takeUntilDestroyed()
+        ).subscribe((state: TimelineState) => {
+            this.timelinePersistanceService.storeInLocalStorage(state);
+        });
+    }
 
     // Current State
     get snapshot(): TimelineState {

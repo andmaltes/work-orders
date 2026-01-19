@@ -18,7 +18,7 @@ app-custom-selector {
 
     }
 
-    .ng-select.ng-select-opened.ng-select-bottom > .ng-select-container {
+    &.ng-select.ng-select-opened.ng-select-bottom > .ng-select-container {
       border-bottom-left-radius: 5px !important;
       border-bottom-right-radius: 5px !important;
     }
