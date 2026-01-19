@@ -50,6 +50,12 @@
       border-right: 1px solid $separator-color;
     }
 
+    @media screen and (max-width: 800px)  {
+      .work-center {
+        flex: 0 0 200px;
+      }
+    }
+
     .work-orders-duration-interval {
       flex: 0 0 113px;
       height: 100%;
@@ -110,6 +116,12 @@
     line-height: 17px;
     border-bottom: 1px solid $separator-color;
     border-right: 1px solid $separator-color;
+  }
+
+  @media screen and (max-width: 800px)  {
+    .work-order-name{
+      flex: 0 0 200px;
+    }
   }
 
 }
