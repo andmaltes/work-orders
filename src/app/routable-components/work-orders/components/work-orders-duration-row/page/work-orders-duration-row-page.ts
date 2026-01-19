@@ -27,9 +27,10 @@ export class WorkOrdersDurationRowPage {
     workOrders$!: Observable<WorkOrderDocumentWithIntervals[]>;
     intervals$: Observable<Interval[]>;
 
-    private _workCenterId!: string;
+    _workCenterId!: string;
 
-    constructor(private timelineStateService: TimelineStateService, private createEditWorkOrderModalServiceService: CreateEditWorkOrderModalServiceService) {
+    constructor(private timelineStateService: TimelineStateService,
+                private createEditWorkOrderModalServiceService: CreateEditWorkOrderModalServiceService) {
         this.intervals$ = this.timelineStateService.intervals$;
     }
 

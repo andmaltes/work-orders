@@ -1,4 +1,4 @@
-import { Component, ElementRef, Input, OnInit, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, Input, OnInit, ViewChild } from '@angular/core';
 import { combineLatest, map, Observable, tap } from "rxjs";
 import { AsyncPipe, NgForOf, NgIf, NgSwitch, Time } from "@angular/common";
 import moment, { Moment } from 'moment';
@@ -20,14 +20,13 @@ import { Interval } from "../../../model/timeline.state";
     templateUrl: './work-orders-table.html',
     styleUrl: './work-orders-table.scss',
 })
-export class WorkOrdersTable implements OnInit {
-
+export class WorkOrdersTable implements AfterViewInit {
     @Input() workCenters: WorkCenterDocument[]=[];
     @Input() intervals: Interval[]=[];
 
     @ViewChild('scrollContainer') scrollContainer!: ElementRef<HTMLDivElement>;
 
-    ngOnInit(): void {
+    ngAfterViewInit(): void {
         this.scrollToToday();
     }
      scrollToToday() {

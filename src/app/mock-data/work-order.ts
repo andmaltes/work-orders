@@ -45,4 +45,15 @@ export const SAMPLE_WORK_ORDERS: WorkOrderDocument[] = [
             endDate: "2026-01-13"
         }
     },
+    {
+        docId: "wo-0005",
+        docType: "workOrder",
+        data: {
+            name: "WO-0005 – CNC Finish Pass",
+            workCenterId: "wc-cnc-1",
+            status: "open",
+            startDate: "2026-01-14",
+            endDate: "2026-01-14"
+        }
+    },
 ];

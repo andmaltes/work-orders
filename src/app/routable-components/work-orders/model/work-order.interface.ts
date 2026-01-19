@@ -22,6 +22,12 @@ export interface WorkOrderDocumentWithIntervals extends WorkOrderDocument {
     // This means, how much of the last interval needs to be removed in order to have accurate positioning
     // (e.g., if the interval is monthly and the day is 15, then the bar will finish in the middle of the interval)
     lastIntervalPercentage?: number;
+    // required width of the bar
+    width?: number;
+    leftPosition?: number;
+    // Whether the work order has enough space to be displayed without overlapping with other work orders
+    hasEnoughtSpace?: boolean;
+    intervalsUntilNextCollision?:number
 }
 
 export type WorkOrderStatus = 'open' | 'in-progress' | 'complete' | 'blocked';

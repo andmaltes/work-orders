@@ -8,7 +8,6 @@ import { WorkOrdersTablePage } from "./components/work-orders-table/page/work-or
   selector: 'app-work-orders',
   imports: [
     TimeScaleSelector,
-    WorkOrdersTable,
     CreateEditWorkOrder,
     WorkOrdersTablePage
   ],

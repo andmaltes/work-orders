@@ -47,11 +47,21 @@ app-work-orders-duration-row {
       top: 50%;
       transform: translateY(-50%);
       border-radius: 8px;
-      display: flex;
-      align-items: center;
-      padding: 0 8px;
-      gap: 4px;
+
       z-index: 1;
+
+      &-content {
+        padding: 0 8px;
+        display: flex;
+        align-items: center;
+        gap: 4px;
+        height: 100%;
+      }
+
+      &-overflow {
+        position: absolute;
+        max-width: max-content;
+      }
 
       &-open {
         box-shadow: 0 0 0 1px $work-orders-open-bar-shadow-color;
@@ -70,7 +80,7 @@ app-work-orders-duration-row {
       }
 
       &-blocked {
-        box-shadow: 0 0 0 1px $work-orders-blocked-bar-bg-color;
+        box-shadow: 0 0 0 1px $work-orders-blocked-bar-shadow-color;
         background-color: $work-orders-blocked-bar-bg-color;
       }
 
