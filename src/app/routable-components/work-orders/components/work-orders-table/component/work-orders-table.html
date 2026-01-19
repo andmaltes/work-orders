@@ -4,7 +4,7 @@
         <div class="work-orders-table-header-cell work-center"> Work Center</div>
         <div class="work-orders-table-header-interval-row">
             <div class="work-orders-table-header-cell work-orders-duration-interval"
-                 *ngFor="let interval of intervals$ | async">
+                 *ngFor="let interval of intervals">
                 {{ interval.formattedName }}
                 <div class="work-orders-table-header-current-badge" *ngIf="interval.isToday">
                     <span>Current {{interval.timescale}}</span>
@@ -12,17 +12,16 @@
             </div>
         </div>
     </div>
-    <div class="work-orders-table-row" *ngFor="let workCenterDocument of workCenters$ | async">
+    <div class="work-orders-table-row" *ngFor="let workCenterDocument of workCenters ">
         <div class="work-order-name">{{ workCenterDocument.data.name }}</div>
 
-        <app-work-orders-duration-row style="flex-grow: 1"
-                                      [workCenterId]="workCenterDocument.docId"></app-work-orders-duration-row>
+        <app-work-orders-duration-row-page style="flex-grow: 1"
+                                      [workCenterId]="workCenterDocument.docId"></app-work-orders-duration-row-page>
     </div>
 
     <!--    One empty row at the end filling the remaining space in the screen (if any)-->
     <div class="work-orders-table-row fill-remaining-space no-hover">
         <div class="work-order-name"></div>
-
-        <app-work-orders-duration-row style="flex-grow: 1"></app-work-orders-duration-row>
+        <app-work-orders-duration-row style="flex-grow: 1" [intervals]="intervals"></app-work-orders-duration-row>
     </div>
 </div>
