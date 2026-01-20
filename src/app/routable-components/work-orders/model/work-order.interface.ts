@@ -28,6 +28,7 @@ export interface WorkOrderDocumentWithIntervals extends WorkOrderDocument {
     // Whether the work order has enough space to be displayed without overlapping with other work orders
     hasEnoughtSpace?: boolean;
     intervalsUntilNextCollision?:number
+    intervalsFromStartViewDate?:number
 }
 
 export type WorkOrderStatus = 'open' | 'in-progress' | 'complete' | 'blocked';

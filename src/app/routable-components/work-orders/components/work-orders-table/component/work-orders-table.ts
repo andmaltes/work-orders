@@ -1,4 +1,13 @@
-import { AfterViewInit, Component, ElementRef, Input, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import {
+    AfterViewInit,
+    ChangeDetectionStrategy,
+    Component,
+    ElementRef,
+    Input,
+    OnDestroy,
+    OnInit,
+    ViewChild
+} from '@angular/core';
 import { combineLatest, map, Observable, tap } from "rxjs";
 import { AsyncPipe, NgForOf, NgIf, NgSwitch, Time } from "@angular/common";
 import moment, { Moment } from 'moment';
@@ -21,6 +30,7 @@ import { WorkOrderDocumentWithIntervals } from "../../../model/work-order.interf
     ],
     templateUrl: './work-orders-table.html',
     styleUrl: './work-orders-table.scss',
+    changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class WorkOrdersTable implements AfterViewInit, OnDestroy {
     @Input({ required: true }) workCenters: WorkCenterDocument[] = [];
@@ -34,6 +44,14 @@ export class WorkOrdersTable implements AfterViewInit, OnDestroy {
     private observer?: IntersectionObserver;
 
     constructor(private timelineStateService: TimelineStateService, private timelineScrollService: TimelineScrollService) {
+    }
+
+    trackByInterval(index: number, interval: Interval): number {
+        return interval.intervalId;
+    }
+
+    trackByWorkCenter(index: number, workCenter: WorkCenterDocument): string {
+        return workCenter.docId;
     }
 
     ngAfterViewInit(): void {

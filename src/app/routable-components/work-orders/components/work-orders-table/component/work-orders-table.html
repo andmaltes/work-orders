@@ -7,7 +7,7 @@
 
            <!-- Intervals-->
             <div class="work-orders-table-header-cell work-orders-duration-interval"
-                 *ngFor="let interval of intervals">
+                 *ngFor="let interval of intervals; trackBy: trackByInterval">
                 {{ interval.formattedName }}
                 <div class="work-orders-table-header-current-badge" *ngIf="interval.isToday">
                     <span>Current {{interval.timescale}}</span>
@@ -17,7 +17,7 @@
             <div #scrollSentinelRight style="width: 1px; flex-shrink: 0;"></div>
         </div>
     </div>
-    <div class="work-orders-table-row" *ngFor="let workCenterDocument of workCenters ">
+    <div class="work-orders-table-row" *ngFor="let workCenterDocument of workCenters; trackBy: trackByWorkCenter">
         <div class="work-order-name">{{ workCenterDocument.data.name }}</div>
 
         <app-work-orders-duration-row-page style="flex-grow: 1"

@@ -28,7 +28,7 @@ export class WorkOrdersTablePage {
         this.intervals$ = combineLatest([this.timelineStateService.intervals$, this.timelineStateService.timescale$]).pipe(
             map(([intervals, timescale]: [Interval[], Timescale]) => this.transformIntervals(intervals, timescale)),
         );
-        this.workOrders$ = this.timelineStateService.getWorkOrdersByWorkCenterWithIntervals();
+        this.workOrders$ = this.timelineStateService.workOrdersByWorkCenterWithIntervals$;
     }
 
     transformIntervals(intervals: Interval[], timescale: Timescale) {

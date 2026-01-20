@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, Component, Input, OnInit } from '@angular/core';
 import { WorkOrdersDurationRow } from "../component/work-orders-duration-row";
 import { map, Observable } from "rxjs";
 import { Interval } from "../../../model/timeline.state";
@@ -15,6 +15,7 @@ import { AsyncPipe } from "@angular/common";
     ],
     templateUrl: './work-orders-duration-row-page.html',
     styleUrl: './work-orders-duration-row-page.scss',
+    changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class WorkOrdersDurationRowPage  implements  OnInit {
     @Input({ required: true }) workCenterId!: string;

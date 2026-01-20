@@ -1,10 +1,10 @@
 import { Injectable } from "@angular/core";
 import { BehaviorSubject, map, Observable } from "rxjs";
-import moment from 'moment';
+import moment, { Moment } from 'moment';
 import { SAMPLE_WORK_CENTERS } from "../../../mock-data/work-center";
 import { SAMPLE_WORK_ORDERS } from "../../../mock-data/work-order";
 import { WorkOrderDocument, WorkOrderDocumentWithIntervals } from "../model/work-order.interface";
-import { TimelineState, Timescale } from "../model/timeline.state";
+import { Interval, TimelineState, Timescale } from "../model/timeline.state";
 import {
     calculateIntervalOverlapForRange,
     calculateIntervals,
@@ -24,6 +24,7 @@ import { WorkCenterDocument } from "../model/work-center.interface";
 // In bigger apps, I would use NgRx.
 @Injectable({ providedIn: 'root' })
 export class TimelineStateService {
+ private readonly DEFAULT_VISIBLE_INTERVALS =7;
 
     // State
     private readonly state$ = new BehaviorSubject<TimelineState>({
@@ -31,22 +32,24 @@ export class TimelineStateService {
         workOrders: SAMPLE_WORK_ORDERS,
         timescale: 'day',
         intervals: [],
-        visibleIntervalsPast: 7,
-        visibleIntervalsFuture: 7
+        visibleIntervalsPast: this.DEFAULT_VISIBLE_INTERVALS,
+        visibleIntervalsFuture:  this.DEFAULT_VISIBLE_INTERVALS,
+        workOrdersByWorkCenterWithIntervals: {}
     });
 
-    constructor(private timelinePersistanceService: TimelinePersistanceService) {
+    constructor(private timelinePersistanceService: TimelinePersistanceService, private timelineScrollService:TimelineScrollService) {
         // load from local storage or create a new state
         let storeState = this.timelinePersistanceService.loadFromLocalStorage();
         if (storeState) {
             this.patchState({
                 ...storeState,
-                visibleIntervalsFuture: 7,
-                visibleIntervalsPast: 7,
+                visibleIntervalsFuture:  this.DEFAULT_VISIBLE_INTERVALS,
+                visibleIntervalsPast:  this.DEFAULT_VISIBLE_INTERVALS,
             });
             this.setTimescale(storeState.timescale);
         }
         this.setTimescale('day');
+        this.computeWorkOrdersByWorkCenterWithIntervals();
         // subscribe to state changes and persist them in local storage
         this.state$.pipe(
             takeUntilDestroyed()
@@ -78,6 +81,10 @@ export class TimelineStateService {
         map(state => state.intervals)
     );
 
+    readonly workOrdersByWorkCenterWithIntervals$ = this.state$.pipe(
+        map(state => state.workOrdersByWorkCenterWithIntervals)
+    );
+
     getWorkOrdersForWorkCenter$(workCenterId: string): Observable<WorkOrderDocument[]> {
         return this.workOrders$.pipe(map(
             (workOrders: WorkOrderDocument[]) => {
@@ -86,31 +93,51 @@ export class TimelineStateService {
             }))
     }
 
-    getWorkOrdersByWorkCenterWithIntervals(): Observable<{ [workCenterId: string]: WorkOrderDocumentWithIntervals[] }> {
-        return this.state$.pipe(
-            map(({
-                     workCenters,
-                     workOrders,
-                     timescale,
-                     visibleIntervalsPast,
-                     visibleIntervalsFuture
-                 }: TimelineState) => {
+// @upgrade: This method can be futher improved by removing momentjs and having some cache for
+    // the orders whose size and position will not change anymore (because they are fulling contained in
+    // the viewport already
+    // Refactoring this will smoth scroll a little bit.
+    private computeWorkOrdersByWorkCenterWithIntervals(input: Partial<TimelineState> = {}) {
+        const data = { ...this.snapshot, ...input };
+        const { workCenters, workOrders, timescale, visibleIntervalsPast, visibleIntervalsFuture } = data;
 
-                const today = moment().startOf(timescale);
-                const viewStart = today.clone().subtract(visibleIntervalsPast, timescale).startOf(timescale);
-                const viewEnd = today.clone().add(visibleIntervalsFuture, timescale).endOf(timescale);
+        const today = moment().startOf(timescale);
+        const viewStart = today.clone().subtract(visibleIntervalsPast, timescale).startOf(timescale);
+        const viewEnd = today.clone().add(visibleIntervalsFuture, timescale).endOf(timescale);
 
-                const result: { [key: string]: WorkOrderDocumentWithIntervals[] } = {};
+        // pre-group orders by Work Center ID to avoid nested O(n^2) filtering
+        const ordersByCenter = new Map<string, WorkOrderDocument[]>();
+        for (const order of workOrders) {
+            const wcId = order.data.workCenterId;
+            if (!ordersByCenter.has(wcId)) {
+                ordersByCenter.set(wcId, []);
+            }
+            ordersByCenter.get(wcId)!.push(order);
+        }
 
-                workCenters.forEach((workCenter: WorkCenterDocument) => {
-                    const orders = this.getWorkOrdersForWorkCenter(workOrders, workCenter.docId)
-                    const ordersWithIntervals = orders.map((order: WorkOrderDocument) => this.computeOrderIntervals(order, viewStart, viewEnd, timescale));
-                    result[workCenter.docId] = this.calculateOrderCollitions(ordersWithIntervals, timescale, viewEnd);
-                })
-                return result;
+        const result: { [key: string]: WorkOrderDocumentWithIntervals[] } = {};
 
-            })
-        );
+        // Iterate through centers
+        for (const workCenter of workCenters) {
+            const centerOrders = ordersByCenter.get(workCenter.docId) || [];
+
+            // Filter only for this center's orders using the optimized start/end
+            const visibleOrders = this.getVisibleWorkOrdersForWorkCenter(
+                centerOrders,
+                viewStart,
+                viewEnd,
+                timescale
+            );
+
+            // Map to intervals and calculate collisions
+            const ordersWithIntervals = visibleOrders.map((order: WorkOrderDocument) =>
+                this.computeOrderIntervals(order, viewStart, viewEnd, timescale)
+            );
+
+            result[workCenter.docId] = this.calculateOrderCollitions(ordersWithIntervals, timescale, viewEnd);
+        }
+
+        this.patchState({ workOrdersByWorkCenterWithIntervals: result });
     }
 
     private computeOrderIntervals(order: WorkOrderDocument, viewStart: moment.Moment, viewEnd: moment.Moment, timescale: Timescale): WorkOrderDocumentWithIntervals {
@@ -133,8 +160,9 @@ export class TimelineStateService {
             const {
                 intervalCount,
                 firstIntervalPercentage,
-                lastIntervalPercentage
-            } = calculateIntervalOverlapForRange(startDate, endDate, timescale);
+                lastIntervalPercentage,
+                intervalsFromStartViewDate
+            } = calculateIntervalOverlapForRange(startDate, endDate, timescale, viewStart);
 
             let workOrderWithIntervals: WorkOrderDocumentWithIntervals = {
                 ...order,
@@ -144,7 +172,8 @@ export class TimelineStateService {
                 lastIntervalPercentage: lastIntervalPercentage,
             };
             workOrderWithIntervals.width = calculateWidth(workOrderWithIntervals);
-            workOrderWithIntervals.leftPosition = calculateLeft(workOrderWithIntervals);
+            workOrderWithIntervals.intervalsFromStartViewDate = intervalsFromStartViewDate;
+            workOrderWithIntervals.leftPosition = calculateLeft(intervalsFromStartViewDate, workOrderWithIntervals);
             workOrderWithIntervals.hasEnoughtSpace = workOrderWithIntervals.width > INTERVAL_WIDTH;
             return workOrderWithIntervals;
         }
@@ -189,34 +218,48 @@ export class TimelineStateService {
         });
     }
 
-    private getWorkOrdersForWorkCenter(orders: WorkOrderDocument[], workCenterId: string): WorkOrderDocument[] {
-        return orders.filter(o => o.data.workCenterId === workCenterId)
+    private getVisibleWorkOrdersForWorkCenter(orders: WorkOrderDocument[],viewStart: Moment, viewEnd: Moment, timescale: Timescale): WorkOrderDocument[] {
+        return orders.filter(o =>
+             (
+                moment(o.data.startDate).isBetween(viewStart, viewEnd, timescale, '[]')
+                || moment(o.data.endDate).isBetween(viewStart, viewEnd, timescale, '[]')
+                || (moment(o.data.startDate).isBefore(viewStart) && moment(o.data.endDate).isAfter(viewEnd))
+            ));
     }
 
     // Actions
     setTimescale(scale: Timescale): void {
-        const intervals = calculateIntervals(scale, this.snapshot.visibleIntervalsPast, this.snapshot.visibleIntervalsFuture);
-        this.patchState({ timescale: scale, intervals: intervals });
+        const intervals = calculateIntervals(scale,  this.DEFAULT_VISIBLE_INTERVALS,  this.DEFAULT_VISIBLE_INTERVALS);
+        this.patchState({ timescale: scale, intervals: intervals, visibleIntervalsPast:  this.DEFAULT_VISIBLE_INTERVALS, visibleIntervalsFuture:  this.DEFAULT_VISIBLE_INTERVALS });
+        this.computeWorkOrdersByWorkCenterWithIntervals({ timescale: scale, intervals: intervals, visibleIntervalsPast:  this.DEFAULT_VISIBLE_INTERVALS, visibleIntervalsFuture:  this.DEFAULT_VISIBLE_INTERVALS })
+        this.timelineScrollService.scrollToToday();
     }
 
     createWorkOrder(order: WorkOrderDocument): void {
+        const workOrders = [...this.snapshot.workOrders, order];
         this.patchState({
-            workOrders: [...this.snapshot.workOrders, order]
+            workOrders
         });
+        this.computeWorkOrdersByWorkCenterWithIntervals({ workOrders })
     }
 
     updateWorkOrder(updated: WorkOrderDocument): void {
+        const workOrders = this.snapshot.workOrders.map((workOrder) =>
+            workOrder.docId === updated.docId ? updated : workOrder
+        );
         this.patchState({
-            workOrders: this.snapshot.workOrders.map((workOrder) =>
-                workOrder.docId === updated.docId ? updated : workOrder
-            )
+            workOrders
         });
+        this.computeWorkOrdersByWorkCenterWithIntervals({ workOrders })
     }
 
     deleteWorkOrder(id: string): void {
+        const workOrders = this.snapshot.workOrders.filter(o => o.docId !== id);
         this.patchState({
-            workOrders: this.snapshot.workOrders.filter(o => o.docId !== id)
+            workOrders
         });
+
+        this.computeWorkOrdersByWorkCenterWithIntervals({ workOrders })
     }
 
     increaseViewPoint(direction: 'past' | 'future'): void {
@@ -226,16 +269,17 @@ export class TimelineStateService {
         }
         switch (direction) {
             case 'past':
-                newState.visibleIntervalsPast = this.snapshot.visibleIntervalsPast + 7;
+                newState.visibleIntervalsPast = this.snapshot.visibleIntervalsPast +  this.DEFAULT_VISIBLE_INTERVALS;
                 break;
             case 'future':
-                newState.visibleIntervalsFuture = this.snapshot.visibleIntervalsFuture + 7;
+                newState.visibleIntervalsFuture = this.snapshot.visibleIntervalsFuture +  this.DEFAULT_VISIBLE_INTERVALS;
                 break;
         }
         newState.intervals = calculateIntervals(this.snapshot.timescale,
             newState.visibleIntervalsPast ?? this.snapshot.visibleIntervalsPast,
             newState.visibleIntervalsFuture ?? this.snapshot.visibleIntervalsFuture);
         this.patchState(newState);
+        this.computeWorkOrdersByWorkCenterWithIntervals(newState);
     }
 
     //  Mutators or Reducers

@@ -1,5 +1,5 @@
 import { WorkCenterDocument } from "./work-center.interface";
-import { WorkOrderDocument } from "./work-order.interface";
+import { WorkOrderDocument, WorkOrderDocumentWithIntervals } from "./work-order.interface";
 
 export interface TimelineState {
     workCenters: WorkCenterDocument[];
@@ -8,6 +8,7 @@ export interface TimelineState {
     intervals: Interval[];
     visibleIntervalsPast: number;
     visibleIntervalsFuture: number;
+    workOrdersByWorkCenterWithIntervals:{ [workCenterId: string]: WorkOrderDocumentWithIntervals[] };
 }
 
 export interface Interval {

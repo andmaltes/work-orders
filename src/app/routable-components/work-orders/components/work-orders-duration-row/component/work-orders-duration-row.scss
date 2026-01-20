@@ -43,11 +43,16 @@ app-work-orders-duration-row {
 
     .work-order-bar {
       position: absolute;
+      will-change: transform, width, left;
       height: 38px;
       top: 50%;
       transform: translateY(-50%);
       border-radius: 8px;
       z-index: 1;
+
+      &.dropdown-is-open {
+        z-index: 100;
+      }
 
       &-content {
         padding: 0 8px;

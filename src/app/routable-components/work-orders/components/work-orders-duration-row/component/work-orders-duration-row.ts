@@ -1,4 +1,5 @@
 import {
+    ChangeDetectionStrategy,
     Component,
     ElementRef, EventEmitter,
     HostListener,
@@ -38,7 +39,8 @@ import { WorkOrdersDetails } from "../../work-orders-details/work-orders-details
     ],
     templateUrl: './work-orders-duration-row.html',
     styleUrl: './work-orders-duration-row.scss',
-    encapsulation: ViewEncapsulation.None
+    encapsulation: ViewEncapsulation.None,
+    changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class WorkOrdersDurationRow {
     @Input() workCenterId?: string;
@@ -52,6 +54,14 @@ export class WorkOrdersDurationRow {
     @ViewChild('container') container?: ElementRef<HTMLDivElement>;
 
     mouseLeftPos = 0;
+
+    trackByInterval(index: number, interval: Interval): number {
+        return interval.intervalId;
+    }
+
+    trackByWorkOrder(index: number, workOrder: WorkOrderDocumentWithIntervals): string {
+        return workOrder.docId;
+    }
 
     onMouseMove(event: MouseEvent) {
         if (this.container) {

@@ -1,5 +1,6 @@
 import { WorkOrderDocumentWithIntervals } from "../model/work-order.interface";
 import { INTERVAL_WIDTH } from "../model/const";
+import { Moment } from "moment";
 
 /* This method calculates the width of the work order duration as follows:
 * 1. The total number of intervals multiplied by the interval width
@@ -28,6 +29,7 @@ export  function calculateWidth(workorder: WorkOrderDocumentWithIntervals): numb
 }
 
 // When the duration is not totally covering the interval, this method calculates the left position of the bar
-export function calculateLeft(workorder: WorkOrderDocumentWithIntervals): number {
-    return (1 - (workorder.firstIntervalPercentage || 0)) * INTERVAL_WIDTH;
+export function calculateLeft(intervalsFromStartViewDate:number,workorder: WorkOrderDocumentWithIntervals): number {
+    // padding + first interval percentage + intervals from start view date
+    return 5 + ((1 - (workorder.firstIntervalPercentage || 0)) * INTERVAL_WIDTH) + ((INTERVAL_WIDTH * intervalsFromStartViewDate));
 }

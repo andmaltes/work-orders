@@ -2,49 +2,51 @@
     <div *ngIf="workCenterId" class="work-orders-duration-row-add" [style.left.px]="mouseLeftPos"
          (click)="openCreateNewOrder()"></div>
     <div class="work-orders-duration-row-interval" [class.work-orders-duration-row-interval-today]="interval.isToday"
-         *ngFor="let interval of intervals">
-        <ng-container *ngFor="let workorder of workOrders;">
-            <ng-template #htmlContent>
-                <app-work-orders-details [workOrder]="workorder"></app-work-orders-details>
-            </ng-template>
-            <div class="work-order-bar"
-                 [ngbTooltip]="htmlContent"
-                 tooltipClass="order-details-tooltip"
-                 [class.work-order-bar-open]="workorder.data.status == 'open'"
-                 [class.work-order-bar-in-progress]="workorder.data.status == 'in-progress'"
-                 [class.work-order-bar-complete]="workorder.data.status == 'complete'"
-                 [class.work-order-bar-blocked]="workorder.data.status == 'blocked'"
-                 *ngIf="workorder.firstIntervalDateTime == interval.intervalId"
-                 [style.width.px]="workorder.width"
-                 [style.left.px]="workorder.leftPosition"
+         *ngFor="let interval of intervals; trackBy: trackByInterval">
+    </div>
+    <ng-container *ngFor="let workorder of workOrders; trackBy: trackByWorkOrder">
+        <ng-template #htmlContent>
+            <app-work-orders-details [workOrder]="workorder"></app-work-orders-details>
+        </ng-template>
+        <div class="work-order-bar"
+             [ngbTooltip]="htmlContent"
+             tooltipClass="order-details-tooltip"
+             [class.work-order-bar-open]="workorder.data.status == 'open'"
+             [class.work-order-bar-in-progress]="workorder.data.status == 'in-progress'"
+             [class.work-order-bar-complete]="workorder.data.status == 'complete'"
+             [class.work-order-bar-blocked]="workorder.data.status == 'blocked'"
+             [style.width.px]="workorder.width"
+             [style.left.px]="workorder.leftPosition"
+             [class.dropdown-is-open]="d.isOpen()"
+             ngbDropdown
+             #d="ngbDropdown"
+        >
+            <div class="work-order-bar-content"
+                 [class.work-order-bar-overflow]="!workorder.hasEnoughtSpace && (workorder.intervalsUntilNextCollision ?? 0) > 0"
+                 [style]="!workorder.hasEnoughtSpace && (workorder.intervalsUntilNextCollision ?? 0) > 0 ? {width: (( workorder.intervalsUntilNextCollision ?? 0) * 113 ) + 'px'} : {}"
             >
-                <div class="work-order-bar-content"
-                     [class.work-order-bar-overflow]="!workorder.hasEnoughtSpace && (workorder.intervalsUntilNextCollision ?? 0) > 0"
-                     [style]="!workorder.hasEnoughtSpace && (workorder.intervalsUntilNextCollision ?? 0) > 0 ? {width: (( workorder.intervalsUntilNextCollision ?? 0) * 113 ) + 'px'} : {}"
-                >
-                    <div class="work-order-bar-label">
-                        {{ workorder.data.name }}
+                <div class="work-order-bar-label">
+                    {{ workorder.data.name }}
+                </div>
+
+                <app-work-order-status-badge
+                        *ngIf="workorder.hasEnoughtSpace || (!workorder.hasEnoughtSpace && (workorder.intervalsUntilNextCollision ?? 0) > 0)"
+                        [orderStatus]="workorder.data.status"></app-work-order-status-badge>
+
+                <div *ngIf="workorder.hasEnoughtSpace  || (!workorder.hasEnoughtSpace && (workorder.intervalsUntilNextCollision ?? 0) > 0)"
+                     class="work-order-bar-options-container"
+                     >
+                    <div class="work-order-bar-options" ngbDropdownToggle>
+                        <img src="ellipsis.png" alt="ellipsis">
                     </div>
 
-                    <app-work-order-status-badge
-                            *ngIf="workorder.hasEnoughtSpace || (!workorder.hasEnoughtSpace && (workorder.intervalsUntilNextCollision ?? 0) > 0)"
-                            [orderStatus]="workorder.data.status"></app-work-order-status-badge>
-
-                    <div *ngIf="workorder.hasEnoughtSpace  || (!workorder.hasEnoughtSpace && (workorder.intervalsUntilNextCollision ?? 0) > 0)"
-                         class="work-order-bar-options-container" ngbDropdown
-                         container="body">
-                        <div class="work-order-bar-options" ngbDropdownToggle>
-                            <img src="ellipsis.png" alt="ellipsis">
-                        </div>
-
-                        <div ngbDropdownMenu>
-                            <button ngbDropdownItem (click)="edit(workorder)">Edit</button>
-                            <button ngbDropdownItem (click)="delete(workorder)">Delete</button>
-                        </div>
+                    <div ngbDropdownMenu>
+                        <button ngbDropdownItem (click)="edit(workorder)">Edit</button>
+                        <button ngbDropdownItem (click)="delete(workorder)">Delete</button>
                     </div>
                 </div>
             </div>
-        </ng-container>
-    </div>
+        </div>
+    </ng-container>
 </div>
 

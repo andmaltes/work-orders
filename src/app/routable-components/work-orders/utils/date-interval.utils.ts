@@ -12,19 +12,21 @@ export interface IntervalOverlapResult {
     intervalCount: number;
     firstIntervalPercentage: number;
     lastIntervalPercentage: number;
+    intervalsFromStartViewDate: number;
 }
 
 export function calculateIntervalOverlapForRange(
     startDate: moment.Moment,
     endDate: moment.Moment,
-    interval: Timescale
+    interval: Timescale,
+    startDateView:moment.Moment
 ): IntervalOverlapResult {
 
     const start = moment(startDate);
     const end = moment(endDate);
 
     if (!start.isValid() || !end.isValid() || end.isBefore(start)) {
-        return { intervalCount: 0, firstIntervalPercentage: 0, lastIntervalPercentage: 0 }
+        return { intervalCount: 0, firstIntervalPercentage: 0, lastIntervalPercentage: 0, intervalsFromStartViewDate:0 }
     }
 
     // Align to interval boundaries
@@ -38,10 +40,13 @@ export function calculateIntervalOverlapForRange(
     const firstIntervalPercentage = percentageCoveredFromStart(start, interval);
     const lastIntervalPercentage = percentageCoveredUntilEnd(end, interval);
 
+    const intervalsFromStartViewDate = moment(firstIntervalStart).diff(startDateView.clone().startOf(interval), interval);
+
     return {
         intervalCount,
         firstIntervalPercentage,
-        lastIntervalPercentage
+        lastIntervalPercentage,
+        intervalsFromStartViewDate
     };
 }
 
