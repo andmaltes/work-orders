@@ -10,8 +10,8 @@ export function dateRangeValidator(group: AbstractControl) {
 
     if (!start || !end) return null;
 
-    let momentStart = moment(start);
-    let momentEnd = moment(end);
+    let momentStart = moment(ngbToDate(start));
+    let momentEnd = moment(ngbToDate(end));
 
     return momentStart.isSameOrBefore(momentEnd)
         ? null

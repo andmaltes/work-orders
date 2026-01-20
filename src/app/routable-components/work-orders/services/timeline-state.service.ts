@@ -93,7 +93,68 @@ export class TimelineStateService {
             }))
     }
 
-// @upgrade: This method can be futher improved by removing momentjs and having some cache for
+    //  Mutators or Reducers
+    setTimescale(scale: Timescale): void {
+        const intervals = calculateIntervals(scale,  this.DEFAULT_VISIBLE_INTERVALS,  this.DEFAULT_VISIBLE_INTERVALS);
+        this.patchState({ timescale: scale, intervals: intervals, visibleIntervalsPast:  this.DEFAULT_VISIBLE_INTERVALS, visibleIntervalsFuture:  this.DEFAULT_VISIBLE_INTERVALS });
+        this.computeWorkOrdersByWorkCenterWithIntervals({ timescale: scale, intervals: intervals, visibleIntervalsPast:  this.DEFAULT_VISIBLE_INTERVALS, visibleIntervalsFuture:  this.DEFAULT_VISIBLE_INTERVALS })
+        this.timelineScrollService.scrollToToday();
+    }
+
+    createWorkOrder(order: WorkOrderDocument): void {
+        const workOrders = [...this.snapshot.workOrders, order];
+        this.patchState({
+            workOrders
+        });
+        this.computeWorkOrdersByWorkCenterWithIntervals({ workOrders })
+    }
+
+    updateWorkOrder(updated: WorkOrderDocument): void {
+        const workOrders = this.snapshot.workOrders.map((workOrder) =>
+            workOrder.docId === updated.docId ? updated : workOrder
+        );
+        this.patchState({
+            workOrders
+        });
+        this.computeWorkOrdersByWorkCenterWithIntervals({ workOrders })
+    }
+
+    deleteWorkOrder(id: string): void {
+        const workOrders = this.snapshot.workOrders.filter(o => o.docId !== id);
+        this.patchState({
+            workOrders
+        });
+
+        this.computeWorkOrdersByWorkCenterWithIntervals({ workOrders })
+    }
+
+    increaseViewPoint(direction: 'past' | 'future'): void {
+        let newState: Partial<TimelineState> = {
+            visibleIntervalsPast: this.snapshot.visibleIntervalsPast,
+            visibleIntervalsFuture: this.snapshot.visibleIntervalsFuture,
+        }
+        switch (direction) {
+            case 'past':
+                newState.visibleIntervalsPast = this.snapshot.visibleIntervalsPast +  this.DEFAULT_VISIBLE_INTERVALS;
+                break;
+            case 'future':
+                newState.visibleIntervalsFuture = this.snapshot.visibleIntervalsFuture +  this.DEFAULT_VISIBLE_INTERVALS;
+                break;
+        }
+        newState.intervals = calculateIntervals(this.snapshot.timescale,
+            newState.visibleIntervalsPast ?? this.snapshot.visibleIntervalsPast,
+            newState.visibleIntervalsFuture ?? this.snapshot.visibleIntervalsFuture);
+        this.patchState(newState);
+        this.computeWorkOrdersByWorkCenterWithIntervals(newState);
+    }
+
+
+    private patchState(patch: Partial<TimelineState>): void {
+        this.state$.next({ ...this.snapshot, ...patch });
+    }
+
+
+    // @upgrade: This method can be futher improved by removing momentjs and having some cache for
     // the orders whose size and position will not change anymore (because they are fulling contained in
     // the viewport already
     // Refactoring this will smoth scroll a little bit.
@@ -220,71 +281,11 @@ export class TimelineStateService {
 
     private getVisibleWorkOrdersForWorkCenter(orders: WorkOrderDocument[],viewStart: Moment, viewEnd: Moment, timescale: Timescale): WorkOrderDocument[] {
         return orders.filter(o =>
-             (
+            (
                 moment(o.data.startDate).isBetween(viewStart, viewEnd, timescale, '[]')
                 || moment(o.data.endDate).isBetween(viewStart, viewEnd, timescale, '[]')
                 || (moment(o.data.startDate).isBefore(viewStart) && moment(o.data.endDate).isAfter(viewEnd))
             ));
-    }
-
-    // Actions
-    setTimescale(scale: Timescale): void {
-        const intervals = calculateIntervals(scale,  this.DEFAULT_VISIBLE_INTERVALS,  this.DEFAULT_VISIBLE_INTERVALS);
-        this.patchState({ timescale: scale, intervals: intervals, visibleIntervalsPast:  this.DEFAULT_VISIBLE_INTERVALS, visibleIntervalsFuture:  this.DEFAULT_VISIBLE_INTERVALS });
-        this.computeWorkOrdersByWorkCenterWithIntervals({ timescale: scale, intervals: intervals, visibleIntervalsPast:  this.DEFAULT_VISIBLE_INTERVALS, visibleIntervalsFuture:  this.DEFAULT_VISIBLE_INTERVALS })
-        this.timelineScrollService.scrollToToday();
-    }
-
-    createWorkOrder(order: WorkOrderDocument): void {
-        const workOrders = [...this.snapshot.workOrders, order];
-        this.patchState({
-            workOrders
-        });
-        this.computeWorkOrdersByWorkCenterWithIntervals({ workOrders })
-    }
-
-    updateWorkOrder(updated: WorkOrderDocument): void {
-        const workOrders = this.snapshot.workOrders.map((workOrder) =>
-            workOrder.docId === updated.docId ? updated : workOrder
-        );
-        this.patchState({
-            workOrders
-        });
-        this.computeWorkOrdersByWorkCenterWithIntervals({ workOrders })
-    }
-
-    deleteWorkOrder(id: string): void {
-        const workOrders = this.snapshot.workOrders.filter(o => o.docId !== id);
-        this.patchState({
-            workOrders
-        });
-
-        this.computeWorkOrdersByWorkCenterWithIntervals({ workOrders })
-    }
-
-    increaseViewPoint(direction: 'past' | 'future'): void {
-        let newState: Partial<TimelineState> = {
-            visibleIntervalsPast: this.snapshot.visibleIntervalsPast,
-            visibleIntervalsFuture: this.snapshot.visibleIntervalsFuture,
-        }
-        switch (direction) {
-            case 'past':
-                newState.visibleIntervalsPast = this.snapshot.visibleIntervalsPast +  this.DEFAULT_VISIBLE_INTERVALS;
-                break;
-            case 'future':
-                newState.visibleIntervalsFuture = this.snapshot.visibleIntervalsFuture +  this.DEFAULT_VISIBLE_INTERVALS;
-                break;
-        }
-        newState.intervals = calculateIntervals(this.snapshot.timescale,
-            newState.visibleIntervalsPast ?? this.snapshot.visibleIntervalsPast,
-            newState.visibleIntervalsFuture ?? this.snapshot.visibleIntervalsFuture);
-        this.patchState(newState);
-        this.computeWorkOrdersByWorkCenterWithIntervals(newState);
-    }
-
-    //  Mutators or Reducers
-    private patchState(patch: Partial<TimelineState>): void {
-        this.state$.next({ ...this.snapshot, ...patch });
     }
 
 }
