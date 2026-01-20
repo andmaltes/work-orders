@@ -1,15 +1,18 @@
 <div class="time-scale-selector">
     <div class="time-scale-selector-container">
-    <div class="time-scale-selector-label">Timescale</div>
-    <div class="time-scale-selector-select">
-        <app-custom-selector
-                [items]="zoomLevels"
-                [defaultValue]="selectedZoomLevel"
-                (onItemSelected)="onTimeScaleChange($event)"
-        >
-            <div class="selected-value-label"> {{ selectedZoomLevel?.label }}
-            </div>
-        </app-custom-selector>
-    </div>
+        <div class="time-scale-selector-label">Timescale</div>
+        <div class="time-scale-selector-select">
+
+            <app-custom-selector
+                    [items]="zoomLevels"
+                    [defaultValue]="selectedZoomLevel"
+                    (onItemSelected)="onTimeScaleChange($event)"
+            >
+                <div class="time-scale-selector-dropdown">
+                    <div class="selected-value-label"> {{ selectedZoomLevel?.label }}</div>
+                    <img class="time-scale-selector-arrow" src="down.png"/>
+                </div>
+            </app-custom-selector>
+        </div>
     </div>
 </div>

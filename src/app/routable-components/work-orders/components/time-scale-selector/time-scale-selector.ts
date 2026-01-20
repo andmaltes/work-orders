@@ -12,7 +12,8 @@ import { CustomSelector, CustomSelectorOption } from "../../../../shared-compone
         CustomSelector
     ],
     templateUrl: './time-scale-selector.html',
-    styleUrl: './time-scale-selector.scss'
+    styleUrl: './time-scale-selector.scss',
+    encapsulation: ViewEncapsulation.None
 })
 export class TimeScaleSelector {
 

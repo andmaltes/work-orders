@@ -1,36 +1,69 @@
 @import '../../../../../styles/_variables';
 
-.time-scale-selector {
-  padding: 26px 0 24px 0;
+app-time-scale-selector {
+  .time-scale-selector {
+    padding: 24px 0;
 
-  &-container {
-    // @upgrade find the right shador as it is not available in the designs
-    box-shadow: 0 0 0 1px rgba(104, 113, 150, 0.1), 0 2.5px 3px -1.5px rgba(200, 207, 233, 1), 0 4.5px 5px -1px rgba(216, 220, 235, 1);
-    width: fit-content;
-    border-radius: 5px;
+    &-container {
+      box-shadow: 0 0 0 1px rgba(104, 113, 150, 0.1), 0 2.5px 3px -1.5px rgba(200, 207, 233, 1), 0 4.5px 5px -1px rgba(216, 220, 235, 1);
+      width: fit-content;
+      border-radius: 5px;
+    }
+
+    &-label {
+      border-radius: 5px 0 0 5px;
+      background-color: $filter-label-bg-color;
+      padding: 5px 8px;
+      color: $filter-label-color;
+      font-family: "Circular-Std", sans-serif;
+      font-size: 13px;
+      font-weight: 400;
+      display: inline-block;
+    }
+
+    &-select {
+      display: inline-block;
+      cursor: pointer !important;
+    }
+
+    &-dropdown {
+      display: flex;
+      gap: 6.5px;
+      align-items: center;
+      justify-content: space-between;
+
+      img {
+        height: 5px;
+        width: 8.47px;
+        position: relative;
+        top: 3px;
+      }
+    }
+
+    .selected-value-label {
+      width: 40px;
+      height: 16px;
+      color: $filter-value-color;
+      font-family: "Circular-Std", sans-serif;
+      font-size: 13px;
+      font-weight: 500;
+    }
   }
 
-  &-label {
-    border-radius: 5px 0 0 5px;
-    background-color: $filter-label-bg-color;
-    padding: 5px 8px;
-    color: $filter-label-color;
-    font-family: "Circular-Std", sans-serif;
-    font-size: 13px;
-    font-weight: 400;
-    display: inline-block;
+  .ng-arrow-wrapper {
+    display: none;
   }
 
-  &-select {
-    display: inline-block;
+  .time-scale-selector-arrow {
+    transition: transform 0.3s ease;
   }
 
-  .selected-value-label {
-    width: 40px;
-    height: 16px;
-    color: $filter-value-color;
-    font-family: "Circular-Std", sans-serif;
-    font-size: 13px;
-    font-weight: 500;
+
+  .ng-select-opened .time-scale-selector-arrow {
+    transform: rotate(-180deg);
+  }
+
+  .ng-dropdown-panel.ng-select-bottom {
+    margin-top: 12px !important;
   }
 }
